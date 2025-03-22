@@ -47,6 +47,9 @@ const ComposerDetailPage = () => {
         display: "flex",
         flexDirection: "column",
         gap: 20,
+        background: "white",
+        borderRadius: "10px",
+        padding: 8,
       }}
     >
       <ComposerHeader composer={composer} />
@@ -79,18 +82,18 @@ const ComposerDetailPage = () => {
         <textarea
           ref={textareaRef}
           value={composer.bio}
-          readOnly // Запрещаем редактирование
+          readOnly
           style={{
             fontFamily: "inherit",
             fontSize: 16,
             textAlign: "start",
             width: "100%",
             overflow: "hidden",
-            resize: "none", // Отключаем ручное изменение размера
-            border: "none", // Убираем рамку, если нужно
-            background: "transparent", // Делаем фон прозрачным
-            outline: "none", // Убираем контур при фокусе
-            cursor: "default", // Делаем курсор обычным
+            resize: "none",
+            background: "transparent",
+            border: "transparent",
+            outline: "none",
+            cursor: "default",
           }}
         />
       </div>

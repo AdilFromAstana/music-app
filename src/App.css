@@ -6,6 +6,10 @@
 
 body {
   margin: 0;
+  background-image: url("/bg.JPG");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .logo {

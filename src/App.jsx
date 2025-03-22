@@ -39,9 +39,10 @@ const NavigationMenu = () => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        background: "white",
       }}
     >
-      <div style={{ color: "white", fontSize: 20 }}>Арқа әншілік мектебі</div>
+      <div style={{ color: "black", fontSize: 20 }}>Арқа әншілік мектебі</div>
       <Button
         onClick={() => setIsDrawerOpen(true)}
         icon={<MenuOutlined style={{ fontSize: 20 }} />}
@@ -96,7 +97,12 @@ const AnimatedRoutes = () => {
         animate="animate"
         exit="exit"
         transition={{ duration: 0.3 }}
-        style={{ width: "100%" }}
+        style={{
+          width: "100%",
+          background: "white",
+          padding: "40px 0",
+          borderRadius: 10,
+        }}
       >
         <Routes location={location}>
           <Route path="/" element={<HomePage />} />
@@ -123,11 +129,16 @@ const AnimatedRoutes = () => {
 const App = () => {
   return (
     <Router>
-      <Layout style={{ minHeight: "100vh", background: "white" }}>
+      <Layout
+        style={{
+          minHeight: "100vh",
+          background: "transparent",
+        }}
+      >
         <NavigationMenu />
         <Content
           style={{
-            padding: "40px",
+            padding: window.innerWidth < 768 ? "20px" : "40px",
             display: "flex",
             alignItems: "center",
             flexDirection: "column",
