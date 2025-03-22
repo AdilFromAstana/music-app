@@ -1,39 +1,122 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Button, Drawer, Layout, Menu } from "antd";
+import { AnimatePresence, motion } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import ComposersPage from "./pages/ComposersPage";
 import RecordingsPage from "./pages/RecordingsPage";
 import NotesPage from "./pages/NotesPage";
 import ComposerDetailPage from "./pages/ComposerDetailPage";
-import "./App.css";
 import RecordingDetailPage from "./pages/RecordingDetailPage";
 import NoteDetailPage from "./pages/NoteDetailPage";
+import StagesOfMentoringStudentPage from "./pages/StagesOfMentoringStudentPage";
+import StagesOfMentoringStudentDetailPage from "./pages/StagesOfMentoringStudentDetailPage";
+import { MenuOutlined } from "@ant-design/icons";
+import "./App.css";
+import { items } from "./data/items";
 
-const { Content } = Layout;
+const { Content, Header } = Layout;
+
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+};
 
 const NavigationMenu = () => {
   const navigate = useNavigate();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  return (
+  return window.innerWidth < 768 ? (
+    <Header
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <div style={{ color: "white", fontSize: 20 }}>Арқа әншілік мектебі</div>
+      <Button
+        onClick={() => setIsDrawerOpen(true)}
+        icon={<MenuOutlined style={{ fontSize: 20 }} />}
+      />
+      <Drawer
+        title="Меню"
+        placement="right"
+        onClose={() => setIsDrawerOpen(false)}
+        open={isDrawerOpen}
+        styles={{
+          body: { padding: 0 },
+        }}
+      >
+        <motion.div
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 100, opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Menu
+            mode="vertical"
+            defaultSelectedKeys={["/"]}
+            onClick={(e) => {
+              setIsDrawerOpen(false);
+              navigate(e.key);
+            }}
+            items={items}
+          />
+        </motion.div>
+      </Drawer>
+    </Header>
+  ) : (
     <Menu
-      theme="dark"
       mode="horizontal"
       defaultSelectedKeys={["/"]}
-      onClick={(e) => navigate(e.key)} // Правильный обработчик кликов
+      onClick={(e) => navigate(e.key)}
       style={{ display: "flex", justifyContent: "center" }}
-      items={[
-        { key: "/", label: "Арқа певческая школа" },
-        { key: "/composers", label: "Народные композиторы" },
-        { key: "/recordings", label: "Аудиозаписи" },
-        { key: "/notes", label: "Ноты" },
-      ]}
+      items={items}
     />
+  );
+};
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        variants={pageVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        transition={{ duration: 0.3 }}
+        style={{ width: "100%" }}
+      >
+        <Routes location={location}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/composers" element={<ComposersPage />} />
+          <Route
+            path="/stagesOfMentoringStudent"
+            element={<StagesOfMentoringStudentPage />}
+          />
+          <Route
+            path="/stagesOfMentoringStudent/:id"
+            element={<StagesOfMentoringStudentDetailPage />}
+          />
+          <Route path="/composers/:id" element={<ComposerDetailPage />} />
+          <Route path="/notes" element={<NotesPage />} />
+          <Route path="/notes/:id" element={<NoteDetailPage />} />
+          <Route path="/recordings" element={<RecordingsPage />} />
+          <Route path="/recordings/:id" element={<RecordingDetailPage />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
@@ -41,26 +124,17 @@ const App = () => {
   return (
     <Router>
       <Layout style={{ minHeight: "100vh", background: "white" }}>
-        <NavigationMenu /> {/* Теперь навигация в правильном месте */}
+        <NavigationMenu />
         <Content
           style={{
             padding: "40px",
             display: "flex",
-            justifyContent: "center",
             alignItems: "center",
             flexDirection: "column",
             textAlign: "center",
           }}
         >
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/composers" element={<ComposersPage />} />
-            <Route path="/composers/:id" element={<ComposerDetailPage />} />
-            <Route path="/notes" element={<NotesPage />} />
-            <Route path="/notes/:id" element={<NoteDetailPage />} />
-            <Route path="/recordings" element={<RecordingsPage />} />
-            <Route path="/recordings/:id" element={<RecordingDetailPage />} />
-          </Routes>
+          <AnimatedRoutes />
         </Content>
       </Layout>
     </Router>

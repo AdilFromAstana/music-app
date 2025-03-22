@@ -7,8 +7,8 @@ const { Title } = Typography;
 
 const NotesPage = () => {
   return (
-    <div style={{ maxWidth: "800px", textAlign: "center" }}>
-      <Title level={2}>Ноты</Title>
+    <div style={{ maxWidth: "800px", textAlign: "center", margin: "0 auto" }}>
+      <Title level={2}>НОТАЛАР</Title>
       <List
         bordered
         dataSource={composers}

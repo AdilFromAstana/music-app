@@ -7,8 +7,8 @@ const { Title } = Typography;
 
 const ComposersPage = () => {
   return (
-    <div style={{ maxWidth: "800px", textAlign: "center" }}>
-      <Title level={2}>Народные композиторы</Title>
+    <div style={{ maxWidth: "800px", textAlign: "center", margin: "0 auto" }}>
+      <Title level={2}>ХАЛЫҚ КОМПОЗИТОРЛАРЫ</Title>
       <List
         bordered
         dataSource={composers}

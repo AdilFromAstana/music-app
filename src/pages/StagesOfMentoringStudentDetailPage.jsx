@@ -1,30 +1,14 @@
-import { PlayCircleOutlined, PauseCircleOutlined } from "@ant-design/icons";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Button } from "antd";
-import { composers } from "../data/composers";
-import audio from "../data/audio.mp3";
-import ComposerHeader from "../components/ComposerHeader";
+import { stages } from "../data/studyStages";
 
 const { Title } = Typography;
 
-const ComposerDetailPage = () => {
+const StagesOfMentoringStudentDetailPage = () => {
   const { id } = useParams();
-  const composer = composers.find((comp) => comp.id == id);
+  const stage = stages.find((comp) => comp.id == id);
   const textareaRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef(null);
-
-  const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
-  };
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -32,9 +16,9 @@ const ComposerDetailPage = () => {
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight + "px";
     }
-  }, [composer.bio]);
+  }, [stage.id]);
 
-  if (!composer) {
+  if (!stage) {
     return <Title level={2}>Ноты не найдены</Title>;
   }
 
@@ -42,18 +26,17 @@ const ComposerDetailPage = () => {
     <div
       style={{
         maxWidth: "800px",
-        margin: "0 auto",
         width: "100%",
+        margin: "0 auto",
         display: "flex",
         flexDirection: "column",
         gap: 20,
       }}
     >
-      <ComposerHeader composer={composer} />
-      <div>
+      <div style={{ width: "100%" }}>
         <div style={{ position: "relative" }}>
-          <div style={{ fontSize: 20 }}>Биография</div>
-          <div
+          <div style={{ fontSize: 20 }}>{stage.title}</div>
+          {/* <div
             style={{
               position: "absolute",
               right: 0,
@@ -74,11 +57,11 @@ const ComposerDetailPage = () => {
                 onClick={togglePlay}
               />
             )}
-          </div>
+          </div> */}
         </div>
         <textarea
           ref={textareaRef}
-          value={composer.bio}
+          value={stage.content}
           readOnly // Запрещаем редактирование
           style={{
             fontFamily: "inherit",
@@ -98,4 +81,4 @@ const ComposerDetailPage = () => {
   );
 };
 
-export default ComposerDetailPage;
+export default StagesOfMentoringStudentDetailPage;

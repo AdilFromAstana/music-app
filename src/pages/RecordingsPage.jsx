@@ -7,8 +7,8 @@ const { Title } = Typography;
 
 const RecordingsPage = () => {
   return (
-    <div style={{ maxWidth: "800px", textAlign: "center" }}>
-      <Title level={2}>Аудиозаписи</Title>
+    <div style={{ maxWidth: "800px", textAlign: "center", margin: "0 auto" }}>
+      <Title level={2}>АУДИОЖАЗБАЛАР</Title>
       <List
         bordered
         dataSource={composers}

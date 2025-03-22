@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Button } from "antd";
 import { composers } from "../data/composers";
+import ComposerHeader from "../components/ComposerHeader";
 
 const { Title, Paragraph } = Typography;
 
@@ -26,28 +27,15 @@ const NoteDetailPage = () => {
     <div
       style={{
         maxWidth: "800px",
+        margin: "0 auto",
+        width: "100%",
         textAlign: "center",
         display: "flex",
         flexDirection: "column",
         gap: 20,
       }}
     >
-      <div
-        style={{
-          display: "grid",
-          alignItems: "flex-start",
-          gridTemplateColumns: "1fr 3fr",
-        }}
-      >
-        <img
-          src={composer.image}
-          alt={composer.name}
-          style={{ maxWidth: "100%", height: "250px", borderRadius: "10px" }}
-        />
-        <Title style={{ margin: 0 }} level={2}>
-          {composer.name}
-        </Title>
-      </div>
+      <ComposerHeader composer={composer} />
       <textarea
         ref={textareaRef}
         value={composer.bio}
@@ -65,9 +53,6 @@ const NoteDetailPage = () => {
           cursor: "default", // Делаем курсор обычным
         }}
       />
-      <Button type="primary" onClick={() => window.history.back()}>
-        Назад
-      </Button>
     </div>
   );
 };
