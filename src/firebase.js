@@ -1,6 +1,16 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  updateDoc,
+  query,
+  limit,
+  startAfter,
+  getDoc,
+} from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -18,16 +28,20 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const analytics = getAnalytics(app);
 
-export async function getComposers(pageSize = 5, lastVisible = null) {
-  let composersQuery = query(
-    collection(db, "composers"),
-    orderBy("description"), // Сортировка (можно поменять на другое поле)
-    limit(pageSize)
-  );
+export async function getComposers() {
+  const composersCol = collection(db, "composers");
+  const snapshot = await getDocs(composersCol);
+  const composers = snapshot.docs.map((doc) => ({
+    id: doc.id, // ✅ Добавляем docId
+    ...doc.data(), // ✅ Добавляем все данные документа
+  }));
+  return composers;
+}
 
-  // Если есть последний документ, начинаем после него
+export async function getComposersPag(pageSize = 5, lastVisible = null) {
+  let composersQuery = query(collection(db, "composers"), limit(pageSize));
+
   if (lastVisible) {
     composersQuery = query(composersQuery, startAfter(lastVisible));
   }
@@ -39,6 +53,8 @@ export async function getComposers(pageSize = 5, lastVisible = null) {
       ...doc.data(),
     }));
     const lastDoc = snapshot.docs[snapshot.docs.length - 1]; // Сохраняем последний документ для пагинации
+    console.log("lastDoc: ", lastDoc);
+    console.log("composers: ", composers);
 
     return { composers, lastDoc };
   } catch (error) {
@@ -50,9 +66,30 @@ export async function updateComposer(docId, updateFields) {
   const docRef = doc(db, "composers", docId);
 
   try {
-    await updateDoc(docRef, updateFields);
+    await updateDoc(docRef, updateFields); // Обновляем документ
     console.log("Document updated successfully!");
+
+    const updatedDocSnap = await getDoc(docRef); // Получаем обновленный документ
+    if (updatedDocSnap.exists()) {
+      const updatedData = { id: docId, ...updatedDocSnap.data() };
+      console.log("Updated Composer:", updatedData);
+      return updatedData; // ✅ Возвращаем обновленный объект
+    } else {
+      console.error("Document does not exist after update.");
+      return null;
+    }
   } catch (error) {
     console.error("Error updating document:", error);
+    return null;
+  }
+}
+
+export async function createComposer(values) {
+  try {
+    const docRef = await addDoc(collection(db, "composers"), values);
+    console.log("Город успешно добавлен с ID:", docRef.id);
+  } catch (error) {
+    console.error("Ошибка при создании города:", error);
+    throw error;
   }
 }

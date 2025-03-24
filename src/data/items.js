@@ -8,3 +8,7 @@ export const items = [
   { key: "/recordings", label: "АУДИОЖАЗБАЛАР" },
   { key: "/notes", label: "НОТАЛАР" },
 ];
+
+export const adminItems = [
+  { key: "/composers", label: "ХАЛЫҚ КОМПОЗИТОРЛАРЫ" },
+];

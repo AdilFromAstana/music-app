@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useNavigate,
   useLocation,
+  Navigate,
 } from "react-router-dom";
-import { Button, Drawer, Layout, Menu } from "antd";
+import { Layout } from "antd";
 import { AnimatePresence, motion } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import ComposersPage from "./pages/ComposersPage";
@@ -17,11 +17,11 @@ import RecordingDetailPage from "./pages/RecordingDetailPage";
 import NoteDetailPage from "./pages/NoteDetailPage";
 import StagesOfMentoringStudentPage from "./pages/StagesOfMentoringStudentPage";
 import StagesOfMentoringStudentDetailPage from "./pages/StagesOfMentoringStudentDetailPage";
-import { MenuOutlined } from "@ant-design/icons";
 import "./App.css";
-import { items } from "./data/items";
-
-const { Content, Header } = Layout;
+import Composers from "./pages/Admin/Composers/Composers";
+import AdminLayout from "./layouts/AdminLayout";
+import MainLayout from "./layouts/MainLayout";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -29,61 +29,11 @@ const pageVariants = {
   exit: { opacity: 0, y: -20 },
 };
 
-const NavigationMenu = () => {
-  const navigate = useNavigate();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  return window.innerWidth < 768 ? (
-    <Header
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        background: "white",
-      }}
-    >
-      <div style={{ color: "black", fontSize: 20 }}>Арқа әншілік мектебі</div>
-      <Button
-        onClick={() => setIsDrawerOpen(true)}
-        icon={<MenuOutlined style={{ fontSize: 20 }} />}
-      />
-      <Drawer
-        title="Меню"
-        placement="right"
-        onClose={() => setIsDrawerOpen(false)}
-        open={isDrawerOpen}
-        styles={{
-          body: { padding: 0 },
-        }}
-      >
-        <motion.div
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 100, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Menu
-            mode="vertical"
-            defaultSelectedKeys={["/"]}
-            onClick={(e) => {
-              setIsDrawerOpen(false);
-              navigate(e.key);
-            }}
-            items={items}
-          />
-        </motion.div>
-      </Drawer>
-    </Header>
-  ) : (
-    <Menu
-      mode="horizontal"
-      defaultSelectedKeys={["/"]}
-      onClick={(e) => navigate(e.key)}
-      style={{ display: "flex", justifyContent: "center" }}
-      items={items}
-    />
-  );
-};
+const adminRoutes = [
+  { path: "composers", element: <Composers /> },
+  { path: "notes", element: <Composers /> },
+  { path: "recordings", element: <Composers /> },
+];
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -98,58 +48,57 @@ const AnimatedRoutes = () => {
         exit="exit"
         transition={{ duration: 0.3 }}
         style={{
+          minHeight: "100vh",
           width: "100%",
-          background: "white",
-          padding: "40px 0",
+          background: "transparent",
           borderRadius: 10,
         }}
       >
         <Routes location={location}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/composers" element={<ComposersPage />} />
-          <Route
-            path="/stagesOfMentoringStudent"
-            element={<StagesOfMentoringStudentPage />}
-          />
-          <Route
-            path="/stagesOfMentoringStudent/:id"
-            element={<StagesOfMentoringStudentDetailPage />}
-          />
-          <Route path="/composers/:id" element={<ComposerDetailPage />} />
-          <Route path="/notes" element={<NotesPage />} />
-          <Route path="/notes/:id" element={<NoteDetailPage />} />
-          <Route path="/recordings" element={<RecordingsPage />} />
-          <Route path="/recordings/:id" element={<RecordingDetailPage />} />
+          <Route path="/admin/*" element={<AdminLayout />}>
+            {adminRoutes.map(({ path, element }) => (
+              <Route key={path} path={path} element={element} />
+            ))}
+            <Route index element={<Navigate to="forms" replace />} />
+          </Route>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="/composers" element={<ComposersPage />} />
+            <Route
+              path="/stagesOfMentoringStudent"
+              element={<StagesOfMentoringStudentPage />}
+            />
+            <Route
+              path="/stagesOfMentoringStudent/:id"
+              element={<StagesOfMentoringStudentDetailPage />}
+            />
+            <Route path="/composers/:id" element={<ComposerDetailPage />} />
+            <Route path="/notes" element={<NotesPage />} />
+            <Route path="/notes/:id" element={<NoteDetailPage />} />
+            <Route path="/recordings" element={<RecordingsPage />} />
+            <Route path="/recordings/:id" element={<RecordingDetailPage />} />
+          </Route>
         </Routes>
       </motion.div>
     </AnimatePresence>
   );
 };
 
-const App = () => {
+const AppRouter = () => {
   return (
     <Router>
-      <Layout
-        style={{
-          minHeight: "100vh",
-          background: "transparent",
-        }}
-      >
-        <NavigationMenu />
-        <Content
-          style={{
-            padding: window.innerWidth < 768 ? "20px" : "40px",
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            textAlign: "center",
-          }}
-        >
-          <AnimatedRoutes />
-        </Content>
-      </Layout>
+      <AnimatedRoutes />
     </Router>
   );
 };
+
+function App() {
+  const queryClient = new QueryClient();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppRouter />
+    </QueryClientProvider>
+  );
+}
 
 export default App;
