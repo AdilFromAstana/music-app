@@ -73,7 +73,7 @@ export async function updateComposer(docId, updateFields) {
     if (updatedDocSnap.exists()) {
       const updatedData = { id: docId, ...updatedDocSnap.data() };
       console.log("Updated Composer:", updatedData);
-      return updatedData; // ✅ Возвращаем обновленный объект
+      return updatedData;
     } else {
       console.error("Document does not exist after update.");
       return null;

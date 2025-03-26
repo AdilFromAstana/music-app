@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Button } from "antd";
 import { composers } from "../data/composers";
-import audio from "../data/audio.mp3";
+// import audio from "../data/audio.mp3";
 import ComposerHeader from "../components/ComposerHeader";
 
 const { Title } = Typography;
@@ -14,6 +14,9 @@ const ComposerDetailPage = () => {
   const textareaRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
+  const audioUrl =
+    // "https://drive.google.com/file/d/1wDkuKCKLRXDswx0AatC6GWwTr-RHyuuF/view?usp=drive_link";
+    "https://ia600703.us.archive.org/9/items/20250326_20250326_1402/%D0%90%D0%B4%D0%B0%D1%81%D2%9B%D0%B0%D2%9B%20%28%D0%91%D1%96%D1%80%D0%B6%D0%B0%D0%BD%20%D1%81%D0%B0%D0%BB%29-%D0%A8%D2%AF%D0%BA%D1%96%D0%BC%D0%B0%D0%BD%D0%BE%D0%B2%20%D0%95%D1%80%D0%BA%D1%96%D0%BD.mp3";
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -56,6 +59,15 @@ const ComposerDetailPage = () => {
       <div>
         <div style={{ position: "relative" }}>
           <div style={{ fontSize: 20 }}>Биография</div>
+          <iframe
+            src="https://archive.org/embed/20250326_20250326_1402"
+            width="500"
+            height="60"
+            frameBorder="0"
+            webkitallowfullscreen="true"
+            mozallowfullscreen="true"
+            allowFullScreen
+          ></iframe>
           <div
             style={{
               position: "absolute",
@@ -65,7 +77,7 @@ const ComposerDetailPage = () => {
               alignItems: "center",
             }}
           >
-            <audio ref={audioRef} src={audio} />
+            <audio ref={audioRef} src={audioUrl} controls />
             {isPlaying ? (
               <PauseCircleOutlined
                 style={{ fontSize: 24, cursor: "pointer" }}
