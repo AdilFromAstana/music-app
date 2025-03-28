@@ -10,12 +10,9 @@ import {
   limit,
   startAfter,
   getDoc,
+  where,
 } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAmP2wIoUAJzRM2HN9hXjtB2R3bKi_HxcM",
   authDomain: "music-school-e9b92.firebaseapp.com",
@@ -37,6 +34,40 @@ export async function getComposers() {
     ...doc.data(), // ✅ Добавляем все данные документа
   }));
   return composers;
+}
+
+export async function getComposerById(id) {
+  if (!id) throw new Error("ID is required");
+
+  const composerDoc = doc(db, "composers", id);
+  const snapshot = await getDoc(composerDoc);
+
+  if (!snapshot.exists()) {
+    throw new Error(`Composer with ID ${id} not found`);
+  }
+
+  return { id: snapshot.id, ...snapshot.data() };
+}
+
+export async function getAudiosByComposer(composerId) {
+  console.log("composerId: ", composerId);
+  if (!composerId) throw new Error("composerId is required");
+
+  const audiosQuery = query(
+    collection(db, "audio"),
+    where("composerId", "==", composerId)
+  );
+
+  const snapshot = await getDocs(audiosQuery);
+
+  if (snapshot.empty) {
+    return []; // Возвращаем пустой массив, если ничего не найдено
+  }
+
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
 }
 
 export async function getComposersPag(pageSize = 5, lastVisible = null) {

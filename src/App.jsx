@@ -6,7 +6,7 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
-import { Layout } from "antd";
+import { ConfigProvider, Layout } from "antd";
 import { AnimatePresence, motion } from "framer-motion";
 import HomePage from "./pages/HomePage";
 import ComposersPage from "./pages/ComposersPage";
@@ -95,9 +95,11 @@ const AppRouter = () => {
 function App() {
   const queryClient = new QueryClient();
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppRouter />
-    </QueryClientProvider>
+    <ConfigProvider theme={{ hashed: false }}>
+      <QueryClientProvider client={queryClient}>
+        <AppRouter />
+      </QueryClientProvider>
+    </ConfigProvider>
   );
 }
 

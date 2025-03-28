@@ -1,8 +1,9 @@
 import { LeftCircleOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import { items } from "../data/items";
+import { Skeleton } from "antd";
 
-const ComposerHeader = ({ composer }) => {
+const ComposerHeader = ({ composer, isLoading }) => {
   const { pathname } = useLocation();
   const prevPath = pathname.split("/").slice(0, -1).join("/");
 
@@ -23,10 +24,16 @@ const ComposerHeader = ({ composer }) => {
         }}
         onClick={() => window.history.back()}
       >
-        <LeftCircleOutlined style={{ fontSize: 14, cursor: "pointer" }} />
-        <span style={{ fontSize: 16, cursor: "pointer" }}>
-          {getPrevPathTitle()}
-        </span>
+        {isLoading ? (
+          <Skeleton.Input active={true} size="small" />
+        ) : (
+          <>
+            <LeftCircleOutlined style={{ fontSize: 14, cursor: "pointer" }} />
+            <span style={{ fontSize: 16, cursor: "pointer" }}>
+              {getPrevPathTitle()}
+            </span>
+          </>
+        )}
       </div>
       <div
         style={{
@@ -37,7 +44,7 @@ const ComposerHeader = ({ composer }) => {
         }}
       >
         <img
-          src={composer.image}
+          src={composer.imageUrl}
           alt={composer.name}
           style={{
             maxWidth: "100%",
@@ -45,14 +52,26 @@ const ComposerHeader = ({ composer }) => {
             borderRadius: "10px",
           }}
         />
-        <div
-          style={{
-            justifySelf: "flex-end",
-            fontSize: window.innerWidth < 768 ? 18 : 30,
-          }}
-        >
-          {composer.name}
-        </div>
+        {isLoading ? (
+          <Skeleton.Input
+            active={true}
+            size="default"
+            style={{
+              backgroundPositionX: 0,
+              justifySelf: "flex-end",
+              width: "100%",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              justifySelf: "flex-end",
+              fontSize: window.innerWidth < 768 ? 18 : 30,
+            }}
+          >
+            {composer.name}
+          </div>
+        )}
       </div>
     </div>
   );

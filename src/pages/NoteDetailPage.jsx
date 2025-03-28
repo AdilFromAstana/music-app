@@ -29,10 +29,12 @@ const NoteDetailPage = () => {
         maxWidth: "800px",
         margin: "0 auto",
         width: "100%",
-        textAlign: "center",
         display: "flex",
         flexDirection: "column",
         gap: 20,
+        background: "white",
+        borderRadius: "10px",
+        padding: 8,
       }}
     >
       <ComposerHeader composer={composer} />

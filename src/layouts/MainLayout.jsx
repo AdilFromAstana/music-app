@@ -1,5 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { MenuOutlined } from "@ant-design/icons";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { items } from "../data/items";
 import { Button, Drawer, Layout, Menu } from "antd";
 
@@ -8,6 +10,11 @@ const { Header, Content } = Layout;
 const NavigationMenu = () => {
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedKey, setSelectedKey] = useState("/");
+
+  useEffect(() => {
+    setSelectedKey(localStorage.getItem("selectedKey") ?? "/");
+  }, []);
 
   return window.innerWidth < 768 ? (
     <Header
@@ -39,11 +46,13 @@ const NavigationMenu = () => {
           transition={{ duration: 0.3 }}
         >
           <Menu
+            selectedKeys={[selectedKey]}
             mode="vertical"
-            defaultSelectedKeys={["/"]}
             onClick={(e) => {
               setIsDrawerOpen(false);
               navigate(e.key);
+              localStorage.setItem("selectedKey", e.key);
+              setSelectedKey(e.key);
             }}
             items={items}
           />
@@ -52,9 +61,13 @@ const NavigationMenu = () => {
     </Header>
   ) : (
     <Menu
+      selectedKeys={[selectedKey]}
       mode="horizontal"
-      defaultSelectedKeys={["/"]}
-      onClick={(e) => navigate(e.key)}
+      onClick={(e) => {
+        navigate(e.key);
+        setSelectedKey(e.key);
+        localStorage.setItem("selectedKey", e.key);
+      }}
       style={{ display: "flex", justifyContent: "center" }}
       items={items}
     />
@@ -77,6 +90,7 @@ const MainLayout = () => {
             alignItems: "center",
             flexDirection: "column",
             textAlign: "center",
+            background: "white",
           }}
         >
           <Outlet />

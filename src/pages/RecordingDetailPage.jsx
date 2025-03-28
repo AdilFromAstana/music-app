@@ -1,15 +1,50 @@
 import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { Typography, Button } from "antd";
-import { composers } from "../data/composers";
+import { Skeleton, Typography } from "antd";
 import ComposerHeader from "../components/ComposerHeader";
+import { getAudiosByComposer, getComposerById } from "../firebase";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 const RecordingDetailPage = () => {
+  const queryClient = useQueryClient();
   const { id } = useParams();
-  const composer = composers.find((comp) => comp.id == id);
   const textareaRef = useRef(null);
+
+  const { data: composer = {}, isLoading } = useQuery({
+    queryKey: ["composer", id],
+    queryFn: async ({ queryKey }) => {
+      const [, params] = queryKey;
+
+      const cachedData = queryClient.getQueryData(["composer", params]);
+      if (cachedData) {
+        return cachedData;
+      }
+
+      return getComposerById(params);
+    },
+    keepPreviousData: true,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
+  });
+
+  const { data: audios = [], isLoading: isAudioLoading } = useQuery({
+    queryKey: ["audios", id],
+    queryFn: async ({ queryKey }) => {
+      const [, params] = queryKey;
+
+      const cachedData = queryClient.getQueryData(["audios", params]);
+      if (cachedData) {
+        return cachedData;
+      }
+
+      return getAudiosByComposer(params);
+    },
+    keepPreviousData: true,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
+  });
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -32,26 +67,36 @@ const RecordingDetailPage = () => {
         display: "flex",
         flexDirection: "column",
         gap: 20,
+        background: "white",
+        borderRadius: "10px",
+        padding: 8,
       }}
     >
       <ComposerHeader composer={composer} />
-      <textarea
-        ref={textareaRef}
-        value={composer.bio}
-        readOnly // Запрещаем редактирование
-        style={{
-          fontFamily: "inherit",
-          fontSize: 16,
-          textAlign: "start",
-          width: "100%",
-          overflow: "hidden",
-          resize: "none", // Отключаем ручное изменение размера
-          border: "none", // Убираем рамку, если нужно
-          background: "transparent", // Делаем фон прозрачным
-          outline: "none", // Убираем контур при фокусе
-          cursor: "default", // Делаем курсор обычным
-        }}
-      />
+      {isAudioLoading ? (
+        <>
+          <Skeleton active />
+          <Skeleton active />
+          <Skeleton active />
+        </>
+      ) : audios.length > 0 ? (
+        audios.map((audio) => {
+          return (
+            <div>
+              <b>{audio.title}</b>
+              <audio
+                src={audio.audioLink}
+                controls
+                style={{
+                  width: "100%",
+                }}
+              />
+            </div>
+          );
+        })
+      ) : (
+        <Title>АУДИОЖАЗБАЛАР ЖОК</Title>
+      )}
     </div>
   );
 };
