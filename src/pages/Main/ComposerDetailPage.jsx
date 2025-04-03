@@ -1,10 +1,10 @@
 import { PlayCircleOutlined, PauseCircleOutlined } from "@ant-design/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Typography, Button, Spin, Skeleton } from "antd";
-import ComposerHeader from "../components/ComposerHeader";
+import { Typography, Skeleton } from "antd";
+import ComposerHeader from "../../components/ComposerHeader";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getComposerById, getComposers } from "../firebase";
+import { getComposerById } from "../../firebase";
 
 const { Title } = Typography;
 

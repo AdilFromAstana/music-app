@@ -2,7 +2,7 @@ import { Modal, Form, Input, Button, Col, message } from "antd";
 import { useEffect, useState } from "react";
 import { updateComposer } from "../../../firebase";
 
-const EditComposerModal = ({
+const EditNoteModal = ({
   queryData,
   setSelectedRecord,
   queryClient,
@@ -20,6 +20,8 @@ const EditComposerModal = ({
       title: record.title,
     });
   };
+
+  console.log("record: ", record);
 
   const handleChangeStatus = async () => {
     setLoading(true);
@@ -59,8 +61,6 @@ const EditComposerModal = ({
         record.id,
         form.getFieldsValue()
       );
-
-      console.log("updatedData: ", updatedData);
 
       queryClient.setQueryData(["cities", queryData], (oldData) => {
         console.log("oldData: ", oldData);
@@ -104,7 +104,6 @@ const EditComposerModal = ({
 
   return (
     <Modal
-      width="75vw"
       open={open}
       onCancel={onClose}
       title={isEditMode ? "Редактировать город" : "Просмотр города"}
@@ -174,4 +173,4 @@ const EditComposerModal = ({
   );
 };
 
-export default EditComposerModal;
+export default EditNoteModal;

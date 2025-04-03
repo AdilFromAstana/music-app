@@ -2,7 +2,7 @@ import { Modal, Form, Input, Button, Row, Col, message } from "antd";
 import { useState } from "react";
 import { createComposer } from "../../../firebase";
 
-const CreateComposerModal = ({ open, onClose, refreshData }) => {
+const CreateNoteModal = ({ open, onClose, refreshData }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +34,6 @@ const CreateComposerModal = ({ open, onClose, refreshData }) => {
 
   return (
     <Modal
-      width="75vw"
       open={open}
       onCancel={onClose}
       title="Создать город"
@@ -85,4 +84,4 @@ const CreateComposerModal = ({ open, onClose, refreshData }) => {
   );
 };
 
-export default CreateComposerModal;
+export default CreateNoteModal;

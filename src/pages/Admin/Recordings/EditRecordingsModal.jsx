@@ -20,6 +20,8 @@ const EditComposerModal = ({
       title: record.title,
     });
   };
+  
+  console.log("record: ", record);
 
   const handleChangeStatus = async () => {
     setLoading(true);
@@ -59,8 +61,6 @@ const EditComposerModal = ({
         record.id,
         form.getFieldsValue()
       );
-
-      console.log("updatedData: ", updatedData);
 
       queryClient.setQueryData(["cities", queryData], (oldData) => {
         console.log("oldData: ", oldData);
@@ -104,7 +104,6 @@ const EditComposerModal = ({
 
   return (
     <Modal
-      width="75vw"
       open={open}
       onCancel={onClose}
       title={isEditMode ? "Редактировать город" : "Просмотр города"}
