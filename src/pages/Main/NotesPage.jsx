@@ -1,6 +1,6 @@
 import React from "react";
 import { List, Typography } from "antd";
-import { composers } from "../data/composers";
+import { composers } from "../../data/composers";
 import { Link } from "react-router-dom";
 
 const { Title } = Typography;

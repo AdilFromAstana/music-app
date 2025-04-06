@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Skeleton, Typography } from "antd";
-import ComposerHeader from "../components/ComposerHeader";
-import { getAudiosByComposer, getComposerById } from "../firebase";
+import ComposerHeader from "../../components/ComposerHeader";
+import { getAudiosByComposer, getComposerById } from "../../firebase";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const { Title } = Typography;

@@ -1,11 +1,9 @@
-import { Table, Input, Button, DatePicker, Select, Tag } from "antd";
+import { Table, Input, Button, Select, Tag } from "antd";
 import { useState, useCallback, memo, useEffect } from "react";
-import CreateComposerModal from "./CreateComposerModal";
-import EditComposerModal from "./EditComposerModal";
+import CreateComposerModal from "./CreateRecordingsModal";
+import EditComposerModal from "./EditRecordingsModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getComposers } from "../../../firebase";
-
-const { RangePicker } = DatePicker;
 
 const debounce = (func, delay) => {
   let timer;
@@ -17,7 +15,7 @@ const debounce = (func, delay) => {
   };
 };
 
-const Composers = memo(() => {
+const Recordings = memo(() => {
   const queryClient = useQueryClient();
   const [pagination, setPagination] = useState({
     current: 1,
@@ -83,11 +81,6 @@ const Composers = memo(() => {
           ? "desc"
           : null,
     });
-    queryClient.invalidateQueries("cities");
-  };
-
-  const handleDateRangeChange = (value) => {
-    setSearchFilters((prev) => ({ ...prev, dateRange: value || [] }));
     queryClient.invalidateQueries("cities");
   };
 
@@ -162,7 +155,7 @@ const Composers = memo(() => {
   return (
     <div style={{ padding: "16px", background: "white" }}>
       <div style={{ display: "flex", gap: "10px" }}>
-        <h2 style={{ margin: 0 }}>ХАЛЫҚ КОМПОЗИТОРЛАРЫ</h2>
+        <h2 style={{ margin: 0 }}>АУДИОЖАЗБАЛАР</h2>
         <Button type="primary" onClick={() => setIsCreateModalOpen(true)}>
           Добавить запись
         </Button>
@@ -218,6 +211,6 @@ const Composers = memo(() => {
   );
 });
 
-Composers.displayName = "Composers";
+Recordings.displayName = "Recordings";
 
-export default Composers;
+export default Recordings;

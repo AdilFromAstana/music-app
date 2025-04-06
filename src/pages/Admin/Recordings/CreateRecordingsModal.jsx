@@ -34,7 +34,6 @@ const CreateComposerModal = ({ open, onClose, refreshData }) => {
 
   return (
     <Modal
-      width="75vw"
       open={open}
       onCancel={onClose}
       title="Создать город"

@@ -1,11 +1,9 @@
 import { Table, Input, Button, DatePicker, Select, Tag } from "antd";
 import { useState, useCallback, memo, useEffect } from "react";
-import CreateComposerModal from "./CreateComposerModal";
-import EditComposerModal from "./EditComposerModal";
+import CreateNotesModal from "./CreateNotesModal";
+import EditNotesModal from "./EditNotesModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getComposers } from "../../../firebase";
-
-const { RangePicker } = DatePicker;
 
 const debounce = (func, delay) => {
   let timer;
@@ -17,7 +15,7 @@ const debounce = (func, delay) => {
   };
 };
 
-const Composers = memo(() => {
+const Notes = memo(() => {
   const queryClient = useQueryClient();
   const [pagination, setPagination] = useState({
     current: 1,
@@ -83,11 +81,6 @@ const Composers = memo(() => {
           ? "desc"
           : null,
     });
-    queryClient.invalidateQueries("cities");
-  };
-
-  const handleDateRangeChange = (value) => {
-    setSearchFilters((prev) => ({ ...prev, dateRange: value || [] }));
     queryClient.invalidateQueries("cities");
   };
 
@@ -162,7 +155,7 @@ const Composers = memo(() => {
   return (
     <div style={{ padding: "16px", background: "white" }}>
       <div style={{ display: "flex", gap: "10px" }}>
-        <h2 style={{ margin: 0 }}>ХАЛЫҚ КОМПОЗИТОРЛАРЫ</h2>
+        <h2 style={{ margin: 0 }}>НОТАЛАР</h2>
         <Button type="primary" onClick={() => setIsCreateModalOpen(true)}>
           Добавить запись
         </Button>
@@ -187,7 +180,7 @@ const Composers = memo(() => {
         onChange={handleTableChange}
       />
 
-      <CreateComposerModal
+      <CreateNotesModal
         refreshData={{
           page: pagination.current,
           pageSize: pagination.pageSize,
@@ -199,7 +192,7 @@ const Composers = memo(() => {
         onClose={() => setIsCreateModalOpen(false)}
       />
       {selectedRecord && (
-        <EditComposerModal
+        <EditNotesModal
           queryData={{
             page: pagination.current,
             pageSize: pagination.pageSize,
@@ -218,6 +211,6 @@ const Composers = memo(() => {
   );
 });
 
-Composers.displayName = "Composers";
+Notes.displayName = "Notes";
 
-export default Composers;
+export default Notes;

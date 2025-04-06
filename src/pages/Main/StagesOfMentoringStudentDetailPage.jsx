@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Button } from "antd";
-import { stages } from "../data/studyStages";
+import { stages } from "../../data/studyStages";
 import { LeftCircleOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
-import { items } from "../data/items";
+import { items } from "../../data/items";
 
 const { Title } = Typography;
 
