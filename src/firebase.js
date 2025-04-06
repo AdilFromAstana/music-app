@@ -97,10 +97,10 @@ export async function updateComposer(docId, updateFields) {
   const docRef = doc(db, "composers", docId);
 
   try {
-    await updateDoc(docRef, updateFields); // Обновляем документ
+    await updateDoc(docRef, updateFields);
     console.log("Document updated successfully!");
 
-    const updatedDocSnap = await getDoc(docRef); // Получаем обновленный документ
+    const updatedDocSnap = await getDoc(docRef);
     if (updatedDocSnap.exists()) {
       const updatedData = { id: docId, ...updatedDocSnap.data() };
       console.log("Updated Composer:", updatedData);
@@ -118,6 +118,59 @@ export async function updateComposer(docId, updateFields) {
 export async function createComposer(values) {
   try {
     const docRef = await addDoc(collection(db, "composers"), values);
+    console.log("Город успешно добавлен с ID:", docRef.id);
+  } catch (error) {
+    console.error("Ошибка при создании города:", error);
+    throw error;
+  }
+}
+
+export async function toggleAudioStatus(audioId) {
+  try {
+    const docRef = doc(db, "audio", audioId);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error("Документ не найден");
+    }
+
+    const currentStatus = docSnap.data().active ?? false;
+    const newStatus = !currentStatus;
+
+    await updateDoc(docRef, { active: newStatus });
+
+    const updatedDocSnap = await getDoc(docRef);
+    if (updatedDocSnap.exists()) {
+      const updatedData = { id: audioId, ...updatedDocSnap.data() };
+      console.log("Обновлённый аудио:", updatedData);
+      return updatedData;
+    }
+  } catch (error) {
+    console.error("Ошибка при обновлении статуса аудио:", error);
+    throw error;
+  }
+}
+
+export async function uploadAudio(values) {
+  try {
+    console.log("Город успешно добавлен с ID:", docRef.id);
+  } catch (error) {
+    console.error("Ошибка при создании города:", error);
+    throw error;
+  }
+}
+
+export async function updateAudio(values) {
+  try {
+    console.log("Город успешно добавлен с ID:", docRef.id);
+  } catch (error) {
+    console.error("Ошибка при создании города:", error);
+    throw error;
+  }
+}
+
+export async function deleteAudio(values) {
+  try {
     console.log("Город успешно добавлен с ID:", docRef.id);
   } catch (error) {
     console.error("Ошибка при создании города:", error);

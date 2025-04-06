@@ -40,7 +40,7 @@ const AdminLayout = () => {
         display: "flex",
         width: "100%",
         justifyContent: "flex-start",
-        height: "100%",
+        minHeight: "100%",
       }}
     >
       <Sider>
@@ -57,7 +57,14 @@ const AdminLayout = () => {
           ]}
         />
       </Sider>
-      <main style={{ width: "100%" }}>
+      <main
+        style={{
+          width: "100%",
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Outlet />
       </main>
 

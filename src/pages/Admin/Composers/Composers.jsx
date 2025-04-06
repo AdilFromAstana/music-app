@@ -1,11 +1,10 @@
-import { Table, Input, Button, DatePicker, Select, Tag } from "antd";
+import { Table, Input, Button, Select, Tag } from "antd";
 import { useState, useCallback, memo, useEffect } from "react";
 import CreateComposerModal from "./CreateComposerModal";
 import EditComposerModal from "./EditComposerModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getComposers } from "../../../firebase";
-
-const { RangePicker } = DatePicker;
+import { useNavigate } from "react-router-dom";
 
 const debounce = (func, delay) => {
   let timer;
@@ -18,6 +17,7 @@ const debounce = (func, delay) => {
 };
 
 const Composers = memo(() => {
+  const nav = useNavigate();
   const queryClient = useQueryClient();
   const [pagination, setPagination] = useState({
     current: 1,
@@ -34,11 +34,10 @@ const Composers = memo(() => {
   });
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const { data: citiesData, isLoading } = useQuery({
+  const { data: composers, isLoading } = useQuery({
     queryKey: [
-      "cities",
+      "composers",
       {
         page: pagination.current,
         pageSize: pagination.pageSize,
@@ -50,7 +49,7 @@ const Composers = memo(() => {
     queryFn: async ({ queryKey }) => {
       const [, params] = queryKey;
 
-      const cachedData = queryClient.getQueryData(["cities", params]);
+      const cachedData = queryClient.getQueryData(["composers", params]);
       if (cachedData) {
         return cachedData;
       }
@@ -61,8 +60,6 @@ const Composers = memo(() => {
     staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000,
   });
-
-  console.log("citiesData: ", citiesData);
 
   useEffect(() => {
     const dwa = async () => {
@@ -83,11 +80,6 @@ const Composers = memo(() => {
           ? "desc"
           : null,
     });
-    queryClient.invalidateQueries("cities");
-  };
-
-  const handleDateRangeChange = (value) => {
-    setSearchFilters((prev) => ({ ...prev, dateRange: value || [] }));
     queryClient.invalidateQueries("cities");
   };
 
@@ -160,7 +152,7 @@ const Composers = memo(() => {
   ];
 
   return (
-    <div style={{ padding: "16px", background: "white" }}>
+    <div style={{ padding: "16px", background: "white", height: "100%" }}>
       <div style={{ display: "flex", gap: "10px" }}>
         <h2 style={{ margin: 0 }}>ХАЛЫҚ КОМПОЗИТОРЛАРЫ</h2>
         <Button type="primary" onClick={() => setIsCreateModalOpen(true)}>
@@ -169,7 +161,7 @@ const Composers = memo(() => {
       </div>
       <Table
         columns={columns}
-        dataSource={citiesData || []}
+        dataSource={composers || []}
         loading={isLoading}
         pagination={{
           current: pagination.current,
@@ -177,13 +169,7 @@ const Composers = memo(() => {
           total: pagination.total,
           showSizeChanger: true,
         }}
-        onRow={(record) => ({
-          onClick: () => {
-            console.log("record: ", record);
-            setSelectedRecord(record);
-            setIsEditModalOpen(true);
-          },
-        })}
+        onRow={(record) => ({ onClick: () => nav(`./${record.id}`) })}
         onChange={handleTableChange}
       />
 
@@ -198,22 +184,6 @@ const Composers = memo(() => {
         open={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
       />
-      {selectedRecord && (
-        <EditComposerModal
-          queryData={{
-            page: pagination.current,
-            pageSize: pagination.pageSize,
-            sortField: sorter.field,
-            sortOrder: sorter.order,
-            filters: searchFilters,
-          }}
-          setSelectedRecord={setSelectedRecord}
-          queryClient={queryClient}
-          open={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          record={selectedRecord}
-        />
-      )}
     </div>
   );
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Skeleton, Typography } from "antd";
 import ComposerHeader from "../../components/ComposerHeader";
@@ -11,17 +11,15 @@ const RecordingDetailPage = () => {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const textareaRef = useRef(null);
+  const audioRefs = useRef([]);
+  const [audioTimes, setAudioTimes] = useState({});
 
   const { data: composer = {}, isLoading } = useQuery({
     queryKey: ["composer", id],
     queryFn: async ({ queryKey }) => {
       const [, params] = queryKey;
-
       const cachedData = queryClient.getQueryData(["composer", params]);
-      if (cachedData) {
-        return cachedData;
-      }
-
+      if (cachedData) return cachedData;
       return getComposerById(params);
     },
     keepPreviousData: true,
@@ -33,12 +31,8 @@ const RecordingDetailPage = () => {
     queryKey: ["audios", id],
     queryFn: async ({ queryKey }) => {
       const [, params] = queryKey;
-
       const cachedData = queryClient.getQueryData(["audios", params]);
-      if (cachedData) {
-        return cachedData;
-      }
-
+      if (cachedData) return cachedData;
       return getAudiosByComposer(params);
     },
     keepPreviousData: true,
@@ -53,6 +47,38 @@ const RecordingDetailPage = () => {
         textareaRef.current.scrollHeight + "px";
     }
   }, [composer.bio]);
+
+  const handlePlay = (indexToPlay, audioId) => {
+    audioRefs.current.forEach((audioRef, index) => {
+      if (audioRef && index !== indexToPlay) {
+        // Сохраняем время
+        const id = audios[index]?.id;
+        if (id) {
+          setAudioTimes((prev) => ({
+            ...prev,
+            [id]: audioRef.currentTime,
+          }));
+        }
+        audioRef.pause();
+      }
+    });
+
+    // Восстановление времени, если есть
+    const time = audioTimes[audioId];
+    if (time && audioRefs.current[indexToPlay]) {
+      audioRefs.current[indexToPlay].currentTime = time;
+    }
+  };
+
+  const handleTimeUpdate = (index, audioId) => {
+    const audioRef = audioRefs.current[index];
+    if (audioRef) {
+      setAudioTimes((prev) => ({
+        ...prev,
+        [audioId]: audioRef.currentTime,
+      }));
+    }
+  };
 
   if (!composer) {
     return <Title level={2}>Музыка не найдена</Title>;
@@ -72,7 +98,7 @@ const RecordingDetailPage = () => {
         padding: 8,
       }}
     >
-      <ComposerHeader composer={composer} />
+      <ComposerHeader composer={composer} isLoading={isLoading} />
       {isAudioLoading ? (
         <>
           <Skeleton active />
@@ -80,16 +106,18 @@ const RecordingDetailPage = () => {
           <Skeleton active />
         </>
       ) : audios.length > 0 ? (
-        audios.map((audio) => {
+        audios.map((audio, index) => {
+          const audioId = audio.id || index.toString(); // гарантированный ID
           return (
-            <div>
+            <div key={audioId}>
               <b>{audio.title}</b>
               <audio
+                ref={(el) => (audioRefs.current[index] = el)}
                 src={audio.audioLink}
                 controls
-                style={{
-                  width: "100%",
-                }}
+                style={{ width: "100%" }}
+                onPlay={() => handlePlay(index, audioId)}
+                onTimeUpdate={() => handleTimeUpdate(index, audioId)}
               />
             </div>
           );

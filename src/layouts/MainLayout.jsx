@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { items } from "../data/items";
 import { Button, Drawer, Layout, Menu } from "antd";
+import { ComposersProvider } from "../context/ComposersContext";
 
 const { Header, Content } = Layout;
 
@@ -76,7 +77,7 @@ const NavigationMenu = () => {
 
 const MainLayout = () => {
   return (
-    <>
+    <ComposersProvider>
       <NavigationMenu />
       <Layout
         style={{
@@ -96,7 +97,7 @@ const MainLayout = () => {
           <Outlet />
         </Content>
       </Layout>
-    </>
+    </ComposersProvider>
   );
 };
 

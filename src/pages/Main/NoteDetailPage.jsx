@@ -8,7 +8,7 @@ const { Title, Paragraph } = Typography;
 
 const NoteDetailPage = () => {
   const { id } = useParams();
-  const composer = composers.find((comp) => comp.id == id);
+  const composer = composers?.find((comp) => comp.id == id);
   const textareaRef = useRef(null);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const NoteDetailPage = () => {
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight + "px";
     }
-  }, [composer.bio]);
+  }, [composer?.bio]);
 
   if (!composer) {
     return <Title level={2}>Ноты не найдены</Title>;

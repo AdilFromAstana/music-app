@@ -12,7 +12,6 @@ import StagesOfMentoringStudentPage from "./pages/Main/StagesOfMentoringStudentP
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import RecordingDetailPage from "./pages/Main/RecordingDetailPage";
 import ComposerDetailPage from "./pages/Main/ComposerDetailPage";
-import Recordings from "./pages/Admin/Recordings/Recordings";
 import Composers from "./pages/Admin/Composers/Composers";
 import RecordingsPage from "./pages/Main/RecordingsPage";
 import NoteDetailPage from "./pages/Main/NoteDetailPage";
@@ -22,8 +21,8 @@ import AdminLayout from "./layouts/AdminLayout";
 import NotesPage from "./pages/Main/NotesPage";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/Main/HomePage";
-import Notes from "./pages/Admin/Notes/Notes";
 import "./App.css";
+import ComposerDetailsPage from "./pages/Admin/Composers/ComposerDetails";
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -33,8 +32,7 @@ const pageVariants = {
 
 const adminRoutes = [
   { path: "composers", element: <Composers /> },
-  { path: "notes", element: <Notes /> },
-  { path: "recordings", element: <Recordings /> },
+  { path: "composers/:id", element: <ComposerDetailsPage /> },
 ];
 
 const AnimatedRoutes = () => {
@@ -51,7 +49,6 @@ const AnimatedRoutes = () => {
         transition={{ duration: 0.3 }}
         style={{
           minHeight: "100vh",
-          width: "100%",
           background: "transparent",
           borderRadius: 10,
         }}

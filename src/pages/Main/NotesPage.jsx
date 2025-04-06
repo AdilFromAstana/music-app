@@ -1,15 +1,18 @@
 import React from "react";
 import { List, Typography } from "antd";
-import { composers } from "../../data/composers";
 import { Link } from "react-router-dom";
+import { useComposers } from "../../context/ComposersContext";
 
 const { Title } = Typography;
 
 const NotesPage = () => {
+  const { composers, isLoading } = useComposers();
+
   return (
     <div style={{ maxWidth: "800px", textAlign: "center", margin: "0 auto" }}>
       <Title level={2}>НОТАЛАР</Title>
       <List
+        loading={isLoading}
         bordered
         dataSource={composers}
         renderItem={(composer) => (
