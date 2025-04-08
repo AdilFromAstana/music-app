@@ -13,10 +13,9 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getAudiosByComposer,
-  uploadAudio,
-  updateAudio,
   deleteAudio,
   toggleAudioStatus,
+  createAudio,
 } from "../../../firebase";
 import {
   UploadOutlined,
@@ -32,11 +31,18 @@ const ComposerSongsTab = ({ composerId }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingAudio, setEditingAudio] = useState(null);
   const [isStatusChanging, setIsStatusChanging] = useState(false);
-
   const [messageApi, contextHolder] = message.useMessage();
+
   const success = ({ message = "Успех" }) => {
     messageApi.open({
       type: "success",
+      content: message,
+    });
+  };
+
+  const error = ({ message = "Ошибка" }) => {
+    messageApi.open({
+      type: "error",
       content: message,
     });
   };
@@ -56,37 +62,31 @@ const ComposerSongsTab = ({ composerId }) => {
   };
 
   const handleSave = async () => {
-    const values = await form.validateFields();
-    const { title, audioFile } = values;
-
     try {
-      let audioUrl = editingAudio?.audioLink;
+      const values = await form.validateFields();
 
-      if (audioFile?.file) {
-        const uploaded = await uploadAudio(audioFile.file.originFileObj);
-        audioUrl = uploaded.downloadURL;
+      const file = values.audioFile?.file;
+      console.log("values: ", values);
+      console.log("file: ", file);
+      console.log("editingAudio: ", editingAudio);
+      if (!file && !editingAudio) {
+        error("Файл обязателен");
+        return;
       }
 
-      if (editingAudio) {
-        await updateAudio(editingAudio.id, {
-          title,
-          audioLink: audioUrl,
-        });
-        message.success("Обновлено");
-      } else {
-        await uploadAudio(audioFile.file.originFileObj, {
-          title,
-          composerId,
-        });
-        message.success("Добавлено");
-      }
+      const newAudio = {
+        composerId,
+        text: values.title,
+        file,
+      };
 
-      queryClient.invalidateQueries(["audios", composerId]);
-      form.resetFields();
+      await createAudio(newAudio);
+
+      success({ message: "Аудио добавлено" });
       setIsModalVisible(false);
-    } catch (e) {
-      console.error(e);
-      message.error("Ошибка");
+      form.resetFields();
+    } catch (err) {
+      message.error({ message: "Ошибка при сохранении" + err.data });
     }
   };
 

@@ -12,18 +12,22 @@ import {
   getDoc,
   where,
 } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAmP2wIoUAJzRM2HN9hXjtB2R3bKi_HxcM",
-  authDomain: "music-school-e9b92.firebaseapp.com",
-  projectId: "music-school-e9b92",
-  storageBucket: "music-school-e9b92.firebasestorage.app",
-  messagingSenderId: "979984365304",
-  appId: "1:979984365304:web:5ed1ae5c85f188fe5c6d0d",
-  measurementId: "G-4YFQ33LBFW",
+  apiKey: "AIzaSyBSKG4HTK0TVLZYy0wYtyZfTu2Dsv4rQMs",
+  authDomain: "test-backend-fbf6b.firebaseapp.com",
+  databaseURL:
+    "https://test-backend-fbf6b-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "test-backend-fbf6b",
+  storageBucket: "test-backend-fbf6b.appspot.com",
+  messagingSenderId: "332032628708",
+  appId: "1:332032628708:web:a999e6175540817a74d9f1",
+  measurementId: "G-J69K1WK6GJ",
 };
 
 const app = initializeApp(firebaseConfig);
+const storage = getStorage(app);
 const db = getFirestore(app);
 
 export async function getComposers() {
@@ -33,6 +37,7 @@ export async function getComposers() {
     id: doc.id, // ✅ Добавляем docId
     ...doc.data(), // ✅ Добавляем все данные документа
   }));
+  console.log("composers: ", composers);
   return composers;
 }
 
@@ -54,7 +59,7 @@ export async function getAudiosByComposer(composerId) {
   if (!composerId) throw new Error("composerId is required");
 
   const audiosQuery = query(
-    collection(db, "audio"),
+    collection(db, "audios"),
     where("composerId", "==", composerId)
   );
 
@@ -64,10 +69,13 @@ export async function getAudiosByComposer(composerId) {
     return []; // Возвращаем пустой массив, если ничего не найдено
   }
 
-  return snapshot.docs.map((doc) => ({
+  const audios = snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
+  console.log("audios: ", audios);
+
+  return audios;
 }
 
 export async function getComposersPag(pageSize = 5, lastVisible = null) {
@@ -118,9 +126,40 @@ export async function updateComposer(docId, updateFields) {
 export async function createComposer(values) {
   try {
     const docRef = await addDoc(collection(db, "composers"), values);
-    console.log("Город успешно добавлен с ID:", docRef.id);
+    console.log("Композитор успешно добавлен с ID:", docRef.id);
   } catch (error) {
     console.error("Ошибка при создании города:", error);
+    throw error;
+  }
+}
+
+export async function createAudio({ composerId, text, file }) {
+  try {
+    if (!composerId || !file) {
+      throw new Error("Не указан composerId или файл");
+    }
+
+    // 1. Загружаем файл в Firebase Storage
+    const storageRef = ref(storage, `audios/${composerId}`);
+    await uploadBytes(storageRef, file);
+
+    // 2. Получаем ссылку на файл
+    const url = await getDownloadURL(storageRef);
+
+    // 3. Сохраняем в Firestore
+    const docRef = await addDoc(collection(db, "audios"), {
+      composerId,
+      title: text,
+      audioLink: url,
+      active: true,
+      fileName: file.name,
+      createdAt: new Date(),
+    });
+
+    console.log("Аудиозапись успешно добавлена с ID:", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Ошибка при добавлении аудио:", error);
     throw error;
   }
 }
@@ -153,7 +192,7 @@ export async function toggleAudioStatus(audioId) {
 
 export async function uploadAudio(values) {
   try {
-    console.log("Город успешно добавлен с ID:", docRef.id);
+    console.log("Город успешно добавлен с ID:", values);
   } catch (error) {
     console.error("Ошибка при создании города:", error);
     throw error;
@@ -162,7 +201,7 @@ export async function uploadAudio(values) {
 
 export async function updateAudio(values) {
   try {
-    console.log("Город успешно добавлен с ID:", docRef.id);
+    console.log("Город успешно добавлен с ID:", values);
   } catch (error) {
     console.error("Ошибка при создании города:", error);
     throw error;
@@ -171,7 +210,7 @@ export async function updateAudio(values) {
 
 export async function deleteAudio(values) {
   try {
-    console.log("Город успешно добавлен с ID:", docRef.id);
+    console.log("Город успешно добавлен с ID:", values);
   } catch (error) {
     console.error("Ошибка при создании города:", error);
     throw error;

@@ -44,7 +44,7 @@ const ComposerHeader = ({ composer, isLoading }) => {
         }}
       >
         <img
-          src={composer.imageUrl}
+          src={composer.image}
           alt={composer.name}
           style={{
             maxWidth: "100%",
