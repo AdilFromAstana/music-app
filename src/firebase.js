@@ -151,8 +151,7 @@ export async function createAudio({ composerId, text, file }) {
       composerId,
       title: text,
       audioLink: url,
-      active: true,
-      fileName: file.name,
+      active: false,
       createdAt: new Date(),
     });
 

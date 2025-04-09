@@ -28,6 +28,7 @@ import { useState } from "react";
 const ComposerSongsTab = ({ composerId }) => {
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
+  const [isCreating, setIsCreating] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingAudio, setEditingAudio] = useState(null);
   const [isStatusChanging, setIsStatusChanging] = useState(false);
@@ -63,12 +64,10 @@ const ComposerSongsTab = ({ composerId }) => {
 
   const handleSave = async () => {
     try {
+      setIsCreating(true);
       const values = await form.validateFields();
 
       const file = values.audioFile?.file;
-      console.log("values: ", values);
-      console.log("file: ", file);
-      console.log("editingAudio: ", editingAudio);
       if (!file && !editingAudio) {
         error("Файл обязателен");
         return;
@@ -81,12 +80,15 @@ const ComposerSongsTab = ({ composerId }) => {
       };
 
       await createAudio(newAudio);
+      queryClient.invalidateQueries(["audios", composerId]);
 
+      form.resetFields();
       success({ message: "Аудио добавлено" });
       setIsModalVisible(false);
-      form.resetFields();
     } catch (err) {
       message.error({ message: "Ошибка при сохранении" + err.data });
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -193,8 +195,12 @@ const ComposerSongsTab = ({ composerId }) => {
       <Modal
         title={editingAudio ? "Редактировать аудио" : "Добавить аудио"}
         open={isModalVisible}
+        cancelText="Отмена"
         onCancel={() => setIsModalVisible(false)}
         onOk={handleSave}
+        okButtonProps={{
+          loading: isCreating,
+        }}
         okText="Сохранить"
       >
         <Form form={form} layout="vertical">
