@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Button } from "antd";
-import { stages } from "../../data/studyStages";
+import { stages } from "../../../data/studyStages";
 import { LeftCircleOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
-import { items } from "../../data/items";
+import { items } from "../../../data/items";
 
 const { Title } = Typography;
 
@@ -61,28 +61,6 @@ const StagesOfMentoringStudentDetailPage = () => {
         </div>
         <div style={{ position: "relative" }}>
           <div style={{ fontSize: 20 }}>{stage.title}</div>
-          {/* <div
-            style={{
-              position: "absolute",
-              right: 0,
-              top: 0,
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <audio ref={audioRef} src={audio} />
-            {isPlaying ? (
-              <PauseCircleOutlined
-                style={{ fontSize: 24, cursor: "pointer" }}
-                onClick={togglePlay}
-              />
-            ) : (
-              <PlayCircleOutlined
-                style={{ fontSize: 24, cursor: "pointer" }}
-                onClick={togglePlay}
-              />
-            )}
-          </div> */}
         </div>
         <textarea
           ref={textareaRef}

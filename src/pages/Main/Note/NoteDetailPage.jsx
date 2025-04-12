@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Button } from "antd";
-import { composers } from "../../data/composers";
-import ComposerHeader from "../../components/ComposerHeader";
+import { composers } from "../../../data/composers";
+import ComposerHeader from "../../../components/ComposerHeader";
 
 const { Title, Paragraph } = Typography;
 

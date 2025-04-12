@@ -2,9 +2,9 @@ import { PlayCircleOutlined, PauseCircleOutlined } from "@ant-design/icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Skeleton } from "antd";
-import ComposerHeader from "../../components/ComposerHeader";
+import ComposerHeader from "../../../components/ComposerHeader";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getComposerById } from "../../firebase";
+import { getComposerById } from "../../../firebase";
 
 const { Title } = Typography;
 
@@ -14,8 +14,6 @@ const ComposerDetailPage = () => {
   const textareaRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
-  const audioUrl =
-    "https://ia600703.us.archive.org/9/items/20250326_20250326_1402/%D0%90%D0%B4%D0%B0%D1%81%D2%9B%D0%B0%D2%9B%20%28%D0%91%D1%96%D1%80%D0%B6%D0%B0%D0%BD%20%D1%81%D0%B0%D0%BB%29-%D0%A8%D2%AF%D0%BA%D1%96%D0%BC%D0%B0%D0%BD%D0%BE%D0%B2%20%D0%95%D1%80%D0%BA%D1%96%D0%BD.mp3";
 
   const togglePlay = () => {
     if (audioRef.current) {
@@ -90,11 +88,11 @@ const ComposerDetailPage = () => {
               position: "absolute",
               right: 0,
               top: 0,
-              display: isLoading ? "none" : "flex",
+              display: composer?.bioAudio ? "flex" : "none",
               alignItems: "center",
             }}
           >
-            <audio ref={audioRef} src={audioUrl} />
+            <audio ref={audioRef} src={composer?.bioAudio} />
             {isPlaying ? (
               <PauseCircleOutlined
                 style={{ fontSize: 24, cursor: "pointer" }}

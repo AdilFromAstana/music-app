@@ -1,7 +1,7 @@
 import React from "react";
 import { List, Typography } from "antd";
 import { Link } from "react-router-dom";
-import { useComposers } from "../../context/ComposersContext";
+import { useComposers } from "../../../context/ComposersContext";
 
 const { Title } = Typography;
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { List, Typography } from "antd";
 import { Link } from "react-router-dom";
-import { stages } from "../../data/studyStages";
+import { stages } from "../../../data/studyStages";
 
 const { Title } = Typography;
 
