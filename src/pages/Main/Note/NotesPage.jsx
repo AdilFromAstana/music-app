@@ -9,7 +9,14 @@ const NotesPage = () => {
   const { composers, isLoading } = useComposers();
 
   return (
-    <div style={{ maxWidth: "800px", textAlign: "center", margin: "0 auto" }}>
+    <div
+      style={{
+        maxWidth: "800px",
+        textAlign: "center",
+        margin: "0 auto",
+        width: "100%",
+      }}
+    >
       <Title level={2}>НОТАЛАР</Title>
       <List
         loading={isLoading}

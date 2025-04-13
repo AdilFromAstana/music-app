@@ -52,26 +52,50 @@ const ComposerHeader = ({ composer, isLoading }) => {
             borderRadius: "10px",
           }}
         />
-        {isLoading ? (
-          <Skeleton.Input
-            active={true}
-            size="default"
-            style={{
-              backgroundPositionX: 0,
-              justifySelf: "flex-end",
-              width: "100%",
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              justifySelf: "flex-end",
-              fontSize: window.innerWidth < 768 ? 18 : 30,
-            }}
-          >
-            {composer.name}
-          </div>
-        )}
+        <div>
+          {isLoading ? (
+            <Skeleton.Input
+              active={true}
+              size="default"
+              style={{
+                backgroundPositionX: 0,
+                justifySelf: "flex-end",
+                width: "100%",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                justifySelf: "flex-end",
+                fontSize: window.innerWidth < 768 ? 18 : 30,
+              }}
+            >
+              {composer.name}
+            </div>
+          )}
+          {isLoading ? (
+            <Skeleton.Input
+              active={true}
+              size="default"
+              style={{
+                marginTop: 10,
+                backgroundPositionX: 0,
+                justifySelf: "flex-end",
+                width: "100%",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                marginTop: 10,
+                justifySelf: "flex-end",
+                fontSize: window.innerWidth < 768 ? 18 : 30,
+              }}
+            >
+              {composer.years}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

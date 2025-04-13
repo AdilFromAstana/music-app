@@ -129,14 +129,15 @@ const ComposerSongsTab = ({ composerId }) => {
     {
       title: "Ссылка",
       dataIndex: "audioLink",
-      render: (text) => <audio src={text} controls style={{ width: "100%" }} />,
+      render: (audio) => (
+        <audio src={audio} controls style={{ width: "100%" }} />
+      ),
       width: 400,
     },
     {
       title: "Статус",
       dataIndex: "active",
       render: (value, record) => {
-        console.log(record);
         return (
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <Tag color={record?.active ? "green" : "red"}>Активный</Tag>
