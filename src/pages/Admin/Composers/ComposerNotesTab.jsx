@@ -1,15 +1,12 @@
 import {
   Table,
   Button,
-  Modal,
   Form,
-  Input,
   Upload,
   message,
   Switch,
   Space,
   Tag,
-  Descriptions,
   Divider,
   Typography,
   Row,
@@ -18,7 +15,7 @@ import {
   Image,
 } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import {
   UploadOutlined,
   EditOutlined,
@@ -35,7 +32,7 @@ import { CSS } from "@dnd-kit/utilities";
 const { Title } = Typography;
 
 // Компонент сортируемой карточки
-const SortableItem = ({ id, children, onRemove }) => {
+const SortableItem = ({ id, children }) => {
   const {
     attributes,
     listeners,
@@ -155,6 +152,7 @@ const SongDetails = ({ song, onBack }) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       message.success("Ноты успешно сохранены");
     } catch (error) {
+      console.error("Ошибка при сохранении нот", error);
       message.error("Ошибка при сохранении нот");
     } finally {
       setUploading(false);
@@ -206,7 +204,14 @@ const SongDetails = ({ song, onBack }) => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        maxWidth: "800px",
+        textAlign: "center",
+        margin: "0 auto",
+        width: "100%",
+      }}
+    >
       <Button
         icon={<ArrowLeftOutlined />}
         onClick={onBack}
@@ -336,9 +341,7 @@ const SongDetails = ({ song, onBack }) => {
 };
 
 const ComposerNotesTab = ({ composerId }) => {
-  const queryClient = useQueryClient();
   const [form] = Form.useForm();
-  const [isCreating, setIsCreating] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingAudio, setEditingAudio] = useState(null);
   const [isStatusChanging, setIsStatusChanging] = useState(false);
@@ -388,14 +391,6 @@ const ComposerNotesTab = ({ composerId }) => {
       width: 400,
     },
     {
-      title: "Ссылка",
-      dataIndex: "audioLink",
-      render: (audio) => (
-        <audio src={audio} controls style={{ width: "100%" }} />
-      ),
-      width: 400,
-    },
-    {
       title: "Статус",
       dataIndex: "active",
       render: (value, record) => {
@@ -417,25 +412,15 @@ const ComposerNotesTab = ({ composerId }) => {
     {
       title: "Действия",
       render: (_, record) => (
-        <Space>
-          <Button
-            icon={<EditOutlined />}
-            onClick={(e) => {
-              e.stopPropagation();
-              showModal(record);
-            }}
-            size="small"
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDelete(record.id);
-            }}
-            size="small"
-          />
-        </Space>
+        <Button
+          icon={<DeleteOutlined />}
+          danger
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDelete(record.id);
+          }}
+          size="small"
+        />
       ),
       width: 100,
     },
