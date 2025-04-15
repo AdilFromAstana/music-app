@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Col, Form, Input, message } from "antd";
-import { updateComposer } from "../../../firebase";
+import { updateComposer } from "../../../../firebase";
 
 const ComposerInfoTab = ({ composerId, composer, form, setComposer }) => {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -21,22 +21,10 @@ const ComposerInfoTab = ({ composerId, composer, form, setComposer }) => {
       setIsEditMode(false);
       message.success("Данные обновлены!");
     } catch (error) {
+      console.error("Ошибка при обновлении:", error);
       message.error("Ошибка при обновлении");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleToggleStatus = async (audioId) => {
-    try {
-      setIsStatusChanging(true);
-      await toggleAudioStatus(audioId);
-      queryClient.invalidateQueries(["audios", composerId]);
-      success({ message: "Статус успешно обновлен!" });
-    } catch {
-      message.error("Ошибка статуса");
-    } finally {
-      setIsStatusChanging(false);
     }
   };
 

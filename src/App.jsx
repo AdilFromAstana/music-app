@@ -11,8 +11,6 @@ import StagesOfMentoringStudentDetailPage from "./pages/Main/StagesOfMentoring/S
 import StagesOfMentoringStudentPage from "./pages/Main/StagesOfMentoring/StagesOfMentoringStudentPage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import RecordingDetailPage from "./pages/Main/Recording/RecordingDetailPage";
-import ComposerDetailPage from "./pages/Main/Composer/ComposerDetailPage";
-import Composers from "./pages/Admin/Composers/Composers";
 import RecordingsPage from "./pages/Main/Recording/RecordingsPage";
 import NoteDetailPage from "./pages/Main/Note/NoteDetailPage";
 import { AnimatePresence, motion } from "framer-motion";
@@ -22,7 +20,9 @@ import NotesPage from "./pages/Main/Note/NotesPage";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/Main/HomePage";
 import "./App.css";
-import ComposerDetailsPage from "./pages/Admin/Composers/ComposerDetails";
+import ComposerItem from "./pages/Composers/Item/ComposerDetails";
+import ComposerDetailPage from "./pages/Main/Composer/ComposerDetailPage";
+import Composers from "./pages/Composers/Composers";
 import Introduction from "./pages/Main/Introduction/Introduction";
 import Conclusion from "./pages/Main/Conclusion/Conclusion";
 
@@ -34,7 +34,7 @@ const pageVariants = {
 
 const adminRoutes = [
   { path: "composers", element: <Composers /> },
-  { path: "composers/:id", element: <ComposerDetailsPage /> },
+  { path: "composers/:id", element: <ComposerItem /> },
 ];
 
 const commonRoutes = [

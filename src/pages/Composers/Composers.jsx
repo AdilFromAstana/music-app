@@ -1,10 +1,9 @@
 import { Table, Input, Button, Select, Tag } from "antd";
 import { useState, useCallback, memo, useEffect } from "react";
-import CreateComposerModal from "./CreateComposerModal";
-import EditComposerModal from "./EditComposerModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getComposers } from "../../../firebase";
+import { getComposers } from "../../firebase";
 import { useNavigate } from "react-router-dom";
+import CreateComposerModal from "./Item/CreateComposerModal";
 
 const debounce = (func, delay) => {
   let timer;
@@ -33,7 +32,6 @@ const Composers = memo(() => {
     active: null,
   });
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState(null);
 
   const { data: composers, isLoading } = useQuery({
     queryKey: [

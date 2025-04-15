@@ -16,7 +16,7 @@ import {
   deleteAudio,
   toggleAudioStatus,
   createAudio,
-} from "../../../firebase";
+} from "../../../../firebase";
 import {
   UploadOutlined,
   EditOutlined,

@@ -139,14 +139,11 @@ export async function createAudio({ composerId, text, file }) {
       throw new Error("Не указан composerId или файл");
     }
 
-    // 1. Загружаем файл в Firebase Storage
     const storageRef = ref(storage, `audios/${composerId}`);
     await uploadBytes(storageRef, file);
 
-    // 2. Получаем ссылку на файл
     const url = await getDownloadURL(storageRef);
 
-    // 3. Сохраняем в Firestore
     const docRef = await addDoc(collection(db, "audios"), {
       composerId,
       title: text,
@@ -161,6 +158,46 @@ export async function createAudio({ composerId, text, file }) {
     console.error("Ошибка при добавлении аудио:", error);
     throw error;
   }
+}
+
+export async function createNotePdf({ composerId, text, file }) {
+  try {
+    if (!composerId || !file) {
+      throw new Error("Не указан composerId или файл");
+    }
+
+    const storageRef = ref(storage, `notePdfs/${composerId}`);
+    await uploadBytes(storageRef, file);
+
+    const url = await getDownloadURL(storageRef);
+
+    const docRef = await addDoc(collection(db, "notePdfs"), {
+      composerId,
+      title: text,
+      notePdfLink: url,
+      active: false,
+      createdAt: new Date(),
+    });
+
+    console.log("ПДФ успешно добавлен с ID:", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Ошибка при добавлении ПДФ:", error);
+    throw error;
+  }
+}
+
+export async function getNotePdfById(id) {
+  if (!id) throw new Error("ID is required");
+
+  const notePdfDoc = doc(db, "notePdfs", id);
+  const snapshot = await getDoc(notePdfDoc);
+
+  if (!snapshot.exists()) {
+    throw new Error(`notePdfs with ID ${id} not found`);
+  }
+
+  return { id: snapshot.id, ...snapshot.data() };
 }
 
 export async function toggleAudioStatus(audioId) {

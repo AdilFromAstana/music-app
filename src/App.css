@@ -10,3 +10,15 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 }
+
+.note-item {
+  position: relative;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  cursor: grab;
+}
+
+.note-item.dragging {
+  opacity: 0.5;
+  transform: scale(1.05);
+  z-index: 10;
+}

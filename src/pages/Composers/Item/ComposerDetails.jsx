@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Form, Tabs } from "antd";
-import ComposerInfoTab from "./ComposerInfoTab";
-import ComposerSongsTab from "./ComposerSongsTab";
-import ComposerNotesTab from "./ComposerNotesTab";
+import ComposerInfoTab from "./Info/ComposerInfoTab";
+import ComposerSongsTab from "./Songs/ComposerSongsTab";
+import ComposerNotesTab from "./Notes/ComposerNotesTab";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { getComposerById } from "../../../firebase";
