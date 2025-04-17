@@ -1,12 +1,33 @@
 import React from "react";
 import { List, Typography } from "antd";
-import { Link } from "react-router-dom";
-import { useComposers } from "../../../context/ComposersContext";
+import { Link, useParams } from "react-router-dom";
+import { getCompositions } from "../../../firebase";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const { Title } = Typography;
 
 const NotesPage = () => {
-  const { composers, isLoading } = useComposers();
+  const queryClient = useQueryClient();
+  const { composerId } = useParams();
+
+  const {
+    data: compositions = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["compositions", {}],
+    queryFn: async ({ queryKey }) => {
+      const [, params] = queryKey;
+      const cached = queryClient.getQueryData(["compositions", params]);
+      if (cached) return cached;
+      return getCompositions(params);
+    },
+    keepPreviousData: true,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
+  });
+
+  console.log("compositions: ", compositions);
 
   return (
     <div
@@ -21,10 +42,12 @@ const NotesPage = () => {
       <List
         loading={isLoading}
         bordered
-        dataSource={composers}
-        renderItem={(composer) => (
+        dataSource={compositions}
+        renderItem={(composition) => (
           <List.Item>
-            <Link to={`/notes/${composer.id}`}>{composer.name}</Link>
+            <Link to={`/composers-notes/${composerId}/${composition.id}`}>
+              {composition.title}
+            </Link>
           </List.Item>
         )}
       />

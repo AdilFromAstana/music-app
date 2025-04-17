@@ -7,7 +7,7 @@ export const items = [
   },
   { key: "/composers", label: "ХАЛЫҚ КОМПОЗИТОРЛАРЫ" },
   { key: "/recordings", label: "АУДИОЖАЗБАЛАР" },
-  { key: "/notes", label: "НОТАЛАР" },
+  { key: "/composers-notes", label: "НОТАЛАР" },
   { key: "/conclusion", label: "ҚОРЫТЫНДЫ" },
 ];
 

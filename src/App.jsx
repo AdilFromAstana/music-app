@@ -25,6 +25,7 @@ import ComposerDetailPage from "./pages/Main/Composer/ComposerDetailPage";
 import Composers from "./pages/Composers/Composers";
 import Introduction from "./pages/Main/Introduction/Introduction";
 import Conclusion from "./pages/Main/Conclusion/Conclusion";
+import ComposersNotePage from "./pages/Main/Note/ComposersNotePage";
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -40,6 +41,10 @@ const adminRoutes = [
 const commonRoutes = [
   { path: "/composers", element: <ComposersPage /> },
   {
+    path: "/composers/:id",
+    element: <ComposerDetailPage />,
+  },
+  {
     path: "/stagesOfMentoringStudent",
     element: <StagesOfMentoringStudentPage />,
   },
@@ -48,15 +53,15 @@ const commonRoutes = [
     element: <StagesOfMentoringStudentDetailPage />,
   },
   {
-    path: "/composers/:id",
-    element: <ComposerDetailPage />,
+    path: "/composers-notes",
+    element: <ComposersNotePage />,
   },
   {
-    path: "/notes",
+    path: "/composers-notes/:composerId/",
     element: <NotesPage />,
   },
   {
-    path: "/notes/:id",
+    path: "/composers-notes/:composerId/:compositionId",
     element: <NoteDetailPage />,
   },
   {

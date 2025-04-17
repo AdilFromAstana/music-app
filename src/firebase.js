@@ -30,6 +30,17 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const db = getFirestore(app);
 
+export async function getCompositions() {
+  const compositionsCol = collection(db, "notePdfs");
+  const snapshot = await getDocs(compositionsCol);
+  const compositions = snapshot.docs.map((doc) => ({
+    id: doc.id, // ✅ Добавляем docId
+    ...doc.data(), // ✅ Добавляем все данные документа
+  }));
+  console.log("compositions: ", compositions);
+  return compositions;
+}
+
 export async function getComposers() {
   const composersCol = collection(db, "composers");
   const snapshot = await getDocs(composersCol);
@@ -188,6 +199,7 @@ export async function createNotePdf({ composerId, text, file }) {
 }
 
 export async function getNotePdfById(id) {
+  console.log("id: ", id);
   if (!id) throw new Error("ID is required");
 
   const notePdfDoc = doc(db, "notePdfs", id);

@@ -1,60 +1,123 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Typography, Button } from "antd";
-import { composers } from "../../../data/composers";
-import ComposerHeader from "../../../components/ComposerHeader";
+import { Typography, Button, Alert, Spin } from "antd";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getNotePdfById } from "../../../firebase";
+import { useMediaQuery } from "react-responsive";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 const NoteDetailPage = () => {
-  const { id } = useParams();
-  const composer = composers?.find((comp) => comp.id == id);
-  const textareaRef = useRef(null);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const { compositionId } = useParams();
+  const queryClient = useQueryClient();
+
+  const [isIframeLoaded, setIsIframeLoaded] = useState(false);
+  const [iframeError, setIframeError] = useState(false);
+
+  const {
+    data: composition,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["composition", compositionId],
+    queryFn: async ({ queryKey }) => {
+      const [, params] = queryKey;
+      const cachedData = queryClient.getQueryData(["notePdfs", params]);
+      return cachedData || getNotePdfById(params);
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height =
-        textareaRef.current.scrollHeight + "px";
-    }
-  }, [composer?.bio]);
+    setIsIframeLoaded(false);
+    setIframeError(false);
+  }, [composition?.notePdfLink]);
 
-  if (!composer) {
+  if (isLoading) return <Spin tip="Загрузка нот..." size="large" />;
+  if (error)
+    return (
+      <Alert
+        message="Ошибка загрузки"
+        description={error.message}
+        type="error"
+      />
+    );
+  if (!composition?.notePdfLink)
     return <Title level={2}>Ноты не найдены</Title>;
-  }
 
   return (
     <div
       style={{
-        maxWidth: "800px",
+        maxWidth: "100%",
         margin: "0 auto",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        gap: 20,
+        padding: isMobile ? "8px" : "16px",
         background: "white",
         borderRadius: "10px",
-        padding: 8,
       }}
     >
-      <ComposerHeader composer={composer} />
-      <textarea
-        ref={textareaRef}
-        value={composer.bio}
-        readOnly // Запрещаем редактирование
-        style={{
-          fontFamily: "inherit",
-          fontSize: 16,
-          textAlign: "start",
-          width: "100%",
-          overflow: "hidden",
-          resize: "none", // Отключаем ручное изменение размера
-          border: "none", // Убираем рамку, если нужно
-          background: "transparent", // Делаем фон прозрачным
-          outline: "none", // Убираем контур при фокусе
-          cursor: "default", // Делаем курсор обычным
-        }}
-      />
+      {isMobile ? (
+        <h3 style={{ textAlign: "center" }}>
+          {composition?.title || "Просмотр нот"}
+        </h3>
+      ) : (
+        <h4 style={{ textAlign: "center" }}>
+          {composition?.title || "Просмотр нот"}
+        </h4>
+      )}
+
+      {!isIframeLoaded && !iframeError && (
+        <div
+          style={{
+            width: "100%",
+            height: 500,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Spin tip="Загрузка документа..." size="large" />
+        </div>
+      )}
+
+      {iframeError && (
+        <Alert
+          message="Не удалось загрузить PDF"
+          description="Попробуйте открыть в новом окне."
+          type="error"
+          style={{ marginBottom: 16 }}
+        />
+      )}
+
+      {!iframeError && (
+        <iframe
+          src={`https://docs.google.com/viewer?url=${encodeURIComponent(
+            composition.notePdfLink
+          )}&embedded=true`}
+          width="100%"
+          height="500px"
+          style={{
+            border: "none",
+            borderRadius: 8,
+            display: isIframeLoaded ? "block" : "none",
+          }}
+          title="Google PDF Viewer"
+          onLoad={() => setIsIframeLoaded(true)}
+          onError={() => setIframeError(true)}
+        />
+      )}
+
+      <div style={{ marginTop: 24, textAlign: "center" }}>
+        <a
+          href={composition.notePdfLink}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Button type="primary" size={isMobile ? "middle" : "large"}>
+            Открыть в отдельном окне
+          </Button>
+        </a>
+      </div>
     </div>
   );
 };
