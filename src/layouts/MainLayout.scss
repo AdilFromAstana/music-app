@@ -1,0 +1,20 @@
+.mainLayoutWrapper {
+  .mainSider {
+    background: #fff;
+    border-right: 1px solid #f0f0f0;
+    position: fixed;
+    top: 64px;
+    left: 0px;
+    bottom: 0px;
+    z-index: 1;
+    overflow: auto;
+  }
+  .ant-menu-item {
+    padding-left: 10px !important;
+  }
+  .ant-menu-title-content {
+    text-align: start;
+    font-size: 14px !important;
+    text-transform: uppercase;
+  }
+}

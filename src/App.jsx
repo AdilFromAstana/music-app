@@ -9,6 +9,7 @@ import {
 import { ConfigProvider } from "antd";
 import StagesOfMentoringStudentDetailPage from "./pages/Main/StagesOfMentoring/StagesOfMentoringStudentDetailPage";
 import StagesOfMentoringStudentPage from "./pages/Main/StagesOfMentoring/StagesOfMentoringStudentPage";
+import Videos from "./pages/Main/Videos/Videos";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import RecordingDetailPage from "./pages/Main/Recording/RecordingDetailPage";
 import RecordingsPage from "./pages/Main/Recording/RecordingsPage";
@@ -26,6 +27,7 @@ import Composers from "./pages/Composers/Composers";
 import Introduction from "./pages/Main/Introduction/Introduction";
 import Conclusion from "./pages/Main/Conclusion/Conclusion";
 import ComposersNotePage from "./pages/Main/Note/ComposersNotePage";
+import VideosDetail from "./pages/Main/Videos/VideosDetail";
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -53,15 +55,15 @@ const commonRoutes = [
     element: <StagesOfMentoringStudentDetailPage />,
   },
   {
-    path: "/composers-notes",
+    path: "/composersNotes",
     element: <ComposersNotePage />,
   },
   {
-    path: "/composers-notes/:composerId/",
+    path: "/composersNotes/:composerId/",
     element: <NotesPage />,
   },
   {
-    path: "/composers-notes/:composerId/:compositionId",
+    path: "/composersNotes/:composerId/:compositionId",
     element: <NoteDetailPage />,
   },
   {
@@ -77,8 +79,12 @@ const commonRoutes = [
     element: <Introduction />,
   },
   {
-    path: "/conclusion",
-    element: <Conclusion />,
+    path: "/videos",
+    element: <Videos />,
+  },
+  {
+    path: "/videos/:id",
+    element: <VideosDetail />,
   },
 ];
 

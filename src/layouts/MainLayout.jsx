@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { items } from "../data/items";
 import { Button, Drawer, Layout, Menu } from "antd";
 import { ComposersProvider } from "../context/ComposersContext";
+import Sider from "antd/es/layout/Sider";
+import "./MainLayout.scss";
 
 const { Header, Content } = Layout;
 
@@ -78,24 +80,53 @@ const NavigationMenu = () => {
 const MainLayout = () => {
   return (
     <ComposersProvider>
-      <NavigationMenu />
-      <Layout
-        style={{
-          background: "transparent",
-        }}
-      >
-        <Content
+      <Layout style={{ minHeight: "100vh" }} className="mainLayoutWrapper">
+        <Sider className="mainSider" width={200}>
+          <Menu
+            mode="inline"
+            defaultSelectedKeys={["profile"]}
+            style={{ height: "100%", borderRight: 0 }}
+            items={items}
+          />
+        </Sider>
+
+        {/* Главная часть с хедером и контентом */}
+        <Layout
           style={{
-            padding: window.innerWidth < 768 ? "20px" : "40px",
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "column",
-            textAlign: "center",
-            background: "white",
+            marginLeft: 200,
           }}
         >
-          <Outlet />
-        </Content>
+          <div
+            style={{
+              height: 64,
+              background: "#fff",
+              display: "flex",
+              alignItems: "center",
+              padding: "0 24px",
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 2,
+              borderBottom: "1px solid #f0f0f0",
+            }}
+          >
+            <div style={{ fontWeight: "bold", fontSize: "18px" }}>
+              VK Layout
+            </div>
+          </div>
+
+          <Content
+            style={{
+              marginTop: 64,
+              padding: "24px",
+              background: "#fff",
+              minHeight: "100vh",
+            }}
+          >
+            <Outlet />
+          </Content>
+        </Layout>
       </Layout>
     </ComposersProvider>
   );

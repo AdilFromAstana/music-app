@@ -1,7 +1,7 @@
 import { LeftCircleOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
-import { items } from "../data/items";
 import { Skeleton } from "antd";
+import { items } from "../data/items";
 
 const ComposerHeader = ({ composer, isLoading }) => {
   const { pathname } = useLocation();
