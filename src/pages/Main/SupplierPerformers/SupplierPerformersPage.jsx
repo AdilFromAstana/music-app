@@ -1,8 +1,8 @@
 import { Typography, List, Input, Spin } from "antd";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { getSupplierPerformerByName } from "../../../firebase";
 import { useState } from "react";
-import { getComposersByName } from "../../../firebase";
+import { useQuery } from "@tanstack/react-query";
 
 const { Title } = Typography;
 const { Search } = Input;
@@ -24,14 +24,14 @@ const highlightMatches = (text, searchTerm) => {
   );
 };
 
-const ComposersPage = () => {
+const SupplierPerformersPage = () => {
   const [searchValue, setSearchValue] = useState("");
 
-  const { data: composers = [], isLoading } = useQuery({
-    queryKey: ["composers", { search: searchValue }],
-    queryFn: () => getComposersByName({ search: searchValue }),
-    staleTime: 5 * 60 * 1000,
-    cacheTime: 10 * 60 * 1000,
+  const { data: supplierPerformers = [], isLoading } = useQuery({
+    queryKey: ["supplierPerformers", { search: searchValue }],
+    queryFn: () => getSupplierPerformerByName({ search: searchValue }),
+    staleTime: 5 * 60 * 1000, // кеш 5 минут
+    cacheTime: 10 * 60 * 1000, // данные держим в кеше 10 минут
     keepPreviousData: true,
   });
 
@@ -49,7 +49,7 @@ const ComposersPage = () => {
         padding: "24px",
       }}
     >
-      <Title level={2}>ХАЛЫҚ КОМПОЗИТОРЛАРЫ</Title>
+      <Title level={2}>⁠ЖЕТКіЗУШі ОРЫНДАУШЫЛАР</Title>
 
       <Search
         placeholder="Іздеу..."
@@ -65,8 +65,8 @@ const ComposersPage = () => {
       ) : (
         <List
           itemLayout="horizontal"
-          dataSource={composers}
-          renderItem={(composer) => (
+          dataSource={supplierPerformers}
+          renderItem={(supplierPerformer) => (
             <List.Item>
               <div
                 style={{
@@ -74,12 +74,12 @@ const ComposersPage = () => {
                   alignItems: "flex-start",
                   gap: 24,
                   width: "100%",
-                  height: 200,
+                  height: 200, // высота = высоте изображения
                 }}
               >
                 <img
-                  src={composer.image || "/placeholder.jpg"}
-                  alt={composer.name}
+                  src={supplierPerformer.image || "/placeholder.jpg"}
+                  alt={supplierPerformer.name}
                   style={{
                     width: 200,
                     height: 200,
@@ -88,11 +88,12 @@ const ComposersPage = () => {
                     flexShrink: 0,
                   }}
                 />
+
                 <div
                   style={{ flex: 1, overflow: "hidden", textAlign: "start" }}
                 >
                   <Link
-                    to={`/composers/${composer.id}`}
+                    to={`/supplierPerformers/${supplierPerformer.id}`}
                     style={{
                       fontSize: 20,
                       fontWeight: 600,
@@ -102,7 +103,7 @@ const ComposersPage = () => {
                       textDecoration: "none",
                     }}
                   >
-                    {highlightMatches(composer.name, searchValue)}
+                    {highlightMatches(supplierPerformer.name, searchValue)}
                   </Link>
                   <div
                     style={{
@@ -115,10 +116,10 @@ const ComposersPage = () => {
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       lineHeight: "1.5em",
-                      maxHeight: "4.5em",
+                      maxHeight: "4.5em", // 3 строки * line-height
                     }}
                   >
-                    {composer.bio}
+                    {supplierPerformer.bio}
                   </div>
                 </div>
               </div>
@@ -130,4 +131,4 @@ const ComposersPage = () => {
   );
 };
 
-export default ComposersPage;
+export default SupplierPerformersPage;

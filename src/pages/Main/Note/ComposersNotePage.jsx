@@ -1,12 +1,11 @@
-import React from "react";
 import { List, Typography } from "antd";
 import { Link } from "react-router-dom";
-import { useComposers } from "../../../context/ComposersContext";
+import { useData } from "../../../context/DataContext";
 
 const { Title } = Typography;
 
 const ComposersNotePage = () => {
-  const { composers, isLoading } = useComposers();
+  const { composers, isLoading } = useData();
 
   return (
     <div
@@ -24,7 +23,7 @@ const ComposersNotePage = () => {
         dataSource={composers}
         renderItem={(composer) => (
           <List.Item>
-            <Link to={`/composers-notes/${composer.id}`}>{composer.name}</Link>
+            <Link to={`/composersNotes/${composer.id}`}>{composer.name}</Link>
           </List.Item>
         )}
       />

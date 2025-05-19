@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Col, Form, Input, message } from "antd";
-import { updateComposer } from "../../../../firebase";
+import { updateComposer } from "../../../../../firebase";
 
 const ComposerInfoTab = ({ composerId, composer, form, setComposer }) => {
   const [isEditMode, setIsEditMode] = useState(false);

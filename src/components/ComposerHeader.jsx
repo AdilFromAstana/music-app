@@ -50,6 +50,7 @@ const ComposerHeader = ({ composer, isLoading }) => {
             maxWidth: "100%",
             height: window.innerWidth < 768 ? "150px" : "250px",
             borderRadius: "10px",
+            objectFit: "cover",
           }}
         />
         <div>

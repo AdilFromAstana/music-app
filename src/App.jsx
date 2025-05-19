@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,14 +19,18 @@ import AdminLayout from "./layouts/AdminLayout";
 import NotesPage from "./pages/Main/Note/NotesPage";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/Main/HomePage";
-import "./App.css";
-import ComposerItem from "./pages/Composers/Item/ComposerDetails";
+import ComposerItem from "./pages/Admin/Composers/Item/ComposerDetails";
 import ComposerDetailPage from "./pages/Main/Composer/ComposerDetailPage";
-import Composers from "./pages/Composers/Composers";
+import Composers from "./pages/Admin/Composers/Composers";
 import Introduction from "./pages/Main/Introduction/Introduction";
-import Conclusion from "./pages/Main/Conclusion/Conclusion";
 import ComposersNotePage from "./pages/Main/Note/ComposersNotePage";
 import VideosDetail from "./pages/Main/Videos/VideosDetail";
+import SupplierPerformersPage from "./pages/Main/SupplierPerformers/SupplierPerformersPage";
+import FormationOfTraditionalSongArt from "./pages/Main/FormationOfTraditionalSongArt/FormationOfTraditionalSongArt";
+import SupplierPerformerDetailPage from "./pages/Main/SupplierPerformers/SupplierPerformerDetailPage";
+import Conclusion from "./pages/Main/Conclusion/Conclusion";
+import "./App.css";
+import Login from "./pages/Main/Login/Login";
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -85,6 +88,26 @@ const commonRoutes = [
   {
     path: "/videos/:id",
     element: <VideosDetail />,
+  },
+  {
+    path: "/supplierPerformers",
+    element: <SupplierPerformersPage />,
+  },
+  {
+    path: "/supplierPerformers/:id",
+    element: <SupplierPerformerDetailPage />,
+  },
+  {
+    path: "/formationOfTraditionalSongArt",
+    element: <FormationOfTraditionalSongArt />,
+  },
+  {
+    path: "/conclusion",
+    element: <Conclusion />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ];
 

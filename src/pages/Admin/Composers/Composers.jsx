@@ -1,9 +1,9 @@
 import { Table, Input, Button, Select, Tag } from "antd";
 import { useState, useCallback, memo, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getComposers } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import CreateComposerModal from "./Item/CreateComposerModal";
+import { getComposers } from "../../../firebase";
 
 const debounce = (func, delay) => {
   let timer;

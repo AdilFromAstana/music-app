@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import {
   getFirestore,
   collection,
@@ -11,6 +12,7 @@ import {
   startAfter,
   getDoc,
   where,
+  orderBy,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, getStorage } from "firebase/storage";
 
@@ -29,6 +31,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const db = getFirestore(app);
+export const auth = getAuth(app);
 
 export async function getCompositions() {
   const compositionsCol = collection(db, "notePdfs");
@@ -112,6 +115,37 @@ export async function getComposersPag(pageSize = 5, lastVisible = null) {
   }
 }
 
+export const getComposersByName = async (params = {}) => {
+  const composersRef = collection(db, "composers");
+  const snapshot = await getDocs(composersRef);
+
+  const allComposers = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  if (!params.search) return allComposers;
+
+  const search = params.search.toLowerCase();
+
+  return allComposers.filter((composer) =>
+    composer.name?.toLowerCase().includes(search)
+  );
+};
+
+export const getSupplierPerformerByName = async (params = {}) => {
+  const ref = collection(db, "supplierPerformers");
+  const snapshot = await getDocs(ref);
+
+  const all = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+  if (!params.search) return all;
+
+  const search = params.search.toLowerCase();
+
+  return all.filter((doc) => doc.name?.toLowerCase().includes(search));
+};
+
 export async function updateComposer(docId, updateFields) {
   const docRef = doc(db, "composers", docId);
 
@@ -170,6 +204,116 @@ export async function createAudio({ composerId, text, file }) {
     throw error;
   }
 }
+
+export async function createSupplierPerformer(values) {
+  try {
+    const docRef = await addDoc(collection(db, "supplierPerformers"), {
+      ...values,
+      createdAt: new Date(),
+    });
+
+    console.log("Исполнитель успешно добавлена с ID:", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Ошибка при добавлении исполнителя:", error);
+    throw error;
+  }
+}
+
+export async function getSupplierPerformers() {
+  const supplierPerformersCol = collection(db, "supplierPerformers");
+  const snapshot = await getDocs(supplierPerformersCol);
+  const supplierPerformers = snapshot.docs.map((doc) => ({
+    id: doc.id, // ✅ Добавляем docId
+    ...doc.data(), // ✅ Добавляем все данные документа
+  }));
+  console.log("composers: ", supplierPerformers);
+  return supplierPerformers;
+}
+
+export async function getSupplierPerformerById(id) {
+  if (!id) throw new Error("ID is required");
+
+  const composerDoc = doc(db, "supplierPerformers", id);
+  const snapshot = await getDoc(composerDoc);
+
+  if (!snapshot.exists()) {
+    throw new Error(`Composer with ID ${id} not found`);
+  }
+
+  return { id: snapshot.id, ...snapshot.data() };
+}
+
+export async function createVideo(values) {
+  try {
+    const docRef = await addDoc(collection(db, "videos"), {
+      ...values,
+      createdAt: new Date(),
+    });
+
+    console.log("Видео успешно добавлена с ID:", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Ошибка при добавлении видео:", error);
+    throw error;
+  }
+}
+
+export const getVideos = async (query) => {
+  const videosRef = collection(db, "videos");
+  const snapshot = await getDocs(videosRef);
+
+  const allVideos = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  if (!query || query.trim() === "") {
+    return allVideos;
+  }
+
+  const q = query.toLowerCase();
+  return allVideos.filter((video) => video.title.toLowerCase().includes(q));
+};
+
+export const getVideoById = async (id) => {
+  if (!id) return null;
+
+  const videoRef = doc(db, "videos", id);
+  const videoSnap = await getDoc(videoRef);
+
+  if (videoSnap.exists()) {
+    return { id: videoSnap.id, ...videoSnap.data() };
+  }
+
+  return null;
+};
+
+export const getPaginatedVideos = async (pageSize = 10, lastDoc = null) => {
+  const videosRef = collection(db, "videos");
+
+  let q = query(videosRef, orderBy("createdAt", "desc"), limit(pageSize));
+
+  if (lastDoc) {
+    q = query(
+      videosRef,
+      orderBy("createdAt", "desc"),
+      startAfter(lastDoc),
+      limit(pageSize)
+    );
+  }
+
+  const snapshot = await getDocs(q);
+
+  const videos = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+
+  const lastVisible = snapshot.docs[snapshot.docs.length - 1] || null;
+
+  return { videos, lastVisible };
+};
 
 export async function createNotePdf({ composerId, text, file }) {
   try {

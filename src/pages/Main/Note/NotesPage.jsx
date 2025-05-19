@@ -45,7 +45,7 @@ const NotesPage = () => {
         dataSource={compositions}
         renderItem={(composition) => (
           <List.Item>
-            <Link to={`/composers-notes/${composerId}/${composition.id}`}>
+            <Link to={`/composersNotes/${composerId}/${composition.id}`}>
               {composition.title}
             </Link>
           </List.Item>

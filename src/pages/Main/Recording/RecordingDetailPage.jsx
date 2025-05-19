@@ -1,11 +1,30 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Skeleton, Typography } from "antd";
+import { Skeleton, Typography, Input, Empty } from "antd";
 import ComposerHeader from "../../../components/ComposerHeader";
 import { getAudiosByComposer, getComposerById } from "../../../firebase";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const { Title } = Typography;
+const { Search } = Input;
+
+// Функция для подсветки совпадений
+const highlightMatches = (text, searchTerm) => {
+  if (!searchTerm || !text) return text;
+
+  const regex = new RegExp(`(${searchTerm})`, "gi");
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    part.toLowerCase() === searchTerm.toLowerCase() ? (
+      <mark key={index} style={{ backgroundColor: "#ffeb3b", padding: 0 }}>
+        {part}
+      </mark>
+    ) : (
+      part
+    )
+  );
+};
 
 const RecordingDetailPage = () => {
   const queryClient = useQueryClient();
@@ -13,6 +32,8 @@ const RecordingDetailPage = () => {
   const textareaRef = useRef(null);
   const audioRefs = useRef([]);
   const [audioTimes, setAudioTimes] = useState({});
+  const [searchValue, setSearchValue] = useState(""); // Состояние для поиска
+  const [filteredAudios, setFilteredAudios] = useState([]); // Отфильтрованные аудио
 
   const { data: composer = {}, isLoading } = useQuery({
     queryKey: ["composer", id],
@@ -40,6 +61,18 @@ const RecordingDetailPage = () => {
     cacheTime: 10 * 60 * 1000,
   });
 
+  // Фильтрация аудио при изменении поискового запроса или данных
+  useEffect(() => {
+    if (searchValue) {
+      const filtered = audios.filter((audio) =>
+        audio.title.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      setFilteredAudios(filtered);
+    } else {
+      setFilteredAudios(audios);
+    }
+  }, [searchValue, audios]);
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -52,7 +85,7 @@ const RecordingDetailPage = () => {
     audioRefs.current.forEach((audioRef, index) => {
       if (audioRef && index !== indexToPlay) {
         // Сохраняем время
-        const id = audios[index]?.id;
+        const id = filteredAudios[index]?.id;
         if (id) {
           setAudioTimes((prev) => ({
             ...prev,
@@ -80,6 +113,10 @@ const RecordingDetailPage = () => {
     }
   };
 
+  const handleSearch = (value) => {
+    setSearchValue(value.trim());
+  };
+
   if (!composer) {
     return <Title level={2}>Музыка не найдена</Title>;
   }
@@ -99,18 +136,30 @@ const RecordingDetailPage = () => {
       }}
     >
       <ComposerHeader composer={composer} isLoading={isLoading} />
+
+      {/* Добавлен поиск */}
+      <Search
+        placeholder="Аудио іздеу..."
+        enterButton="Іздеу"
+        size="large"
+        allowClear
+        onSearch={handleSearch}
+        style={{ marginBottom: 16 }}
+      />
+
       {isAudioLoading ? (
         <>
           <Skeleton active />
           <Skeleton active />
           <Skeleton active />
         </>
-      ) : audios.length > 0 ? (
-        audios.map((audio, index) => {
-          const audioId = audio.id || index.toString(); // гарантированный ID
+      ) : filteredAudios.length > 0 ? (
+        filteredAudios.map((audio, index) => {
+          const audioId = audio.id || index.toString();
           return (
             <div key={audioId}>
-              <b>{audio.title}</b>
+              {/* Добавлена подсветка совпадений в названии */}
+              <b>{highlightMatches(audio.title, searchValue)}</b>
               <audio
                 ref={(el) => (audioRefs.current[index] = el)}
                 src={audio.audioLink}
@@ -123,7 +172,9 @@ const RecordingDetailPage = () => {
           );
         })
       ) : (
-        <Title>АУДИОЖАЗБАЛАР ЖОК</Title>
+        <Empty
+          description={searchValue ? "Аудио табылмады" : "АУДИОЖАЗБАЛАР ЖОК"}
+        />
       )}
     </div>
   );

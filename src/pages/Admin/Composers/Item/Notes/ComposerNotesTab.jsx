@@ -2,7 +2,7 @@ import { Button, Form, message, Switch, Tag } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
-import { getAudiosByComposer } from "../../../../firebase";
+import { getAudiosByComposer } from "../../../../../firebase";
 import { ComposerNoteTable } from "./ComposerNoteTable";
 import { SongDetails } from "./SongDetails";
 

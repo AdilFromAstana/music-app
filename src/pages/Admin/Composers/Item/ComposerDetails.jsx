@@ -5,7 +5,7 @@ import ComposerSongsTab from "./Songs/ComposerSongsTab";
 import ComposerNotesTab from "./Notes/ComposerNotesTab";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { getComposerById } from "../../../firebase";
+import { getComposerById } from "../../../../firebase";
 
 const ComposerDetailsPage = () => {
   const { id } = useParams();

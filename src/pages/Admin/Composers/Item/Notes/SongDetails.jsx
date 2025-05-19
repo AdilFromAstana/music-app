@@ -7,7 +7,7 @@ import {
   SaveOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
-import { createNotePdf, getNotePdfById } from "../../../../firebase";
+import { createNotePdf, getNotePdfById } from "../../../../../firebase";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const { Title } = Typography;

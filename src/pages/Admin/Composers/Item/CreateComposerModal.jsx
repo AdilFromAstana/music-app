@@ -1,6 +1,6 @@
 import { Modal, Form, Input, Button, Row, Col, message } from "antd";
 import { useState } from "react";
-import { createComposer } from "../../../firebase";
+import { createComposer } from "../../../../firebase";
 
 const CreateComposerModal = ({ open, onClose, refreshData }) => {
   const [form] = Form.useForm();
