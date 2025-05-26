@@ -31,6 +31,7 @@ import SupplierPerformerDetailPage from "./pages/Main/SupplierPerformers/Supplie
 import Conclusion from "./pages/Main/Conclusion/Conclusion";
 import "./App.css";
 import Login from "./pages/Main/Login/Login";
+import { LanguageProvider } from "./context/LanguageContext";
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -161,7 +162,9 @@ function App() {
   return (
     <ConfigProvider theme={{ hashed: false }}>
       <QueryClientProvider client={queryClient}>
-        <AppRouter />
+        <LanguageProvider>
+          <AppRouter />
+        </LanguageProvider>
       </QueryClientProvider>
     </ConfigProvider>
   );

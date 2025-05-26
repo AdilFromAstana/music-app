@@ -5,11 +5,14 @@ import { Typography, Skeleton } from "antd";
 import ComposerHeader from "../../../components/ComposerHeader";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getComposerById } from "../../../firebase";
+import { useLanguage } from "../../../context/LanguageContext";
 
 const { Title } = Typography;
 
 const ComposerDetailPage = () => {
   const { id } = useParams();
+  const { language } = useLanguage();
+  console.log("language: ", language);
   const queryClient = useQueryClient();
   const textareaRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -50,6 +53,9 @@ const ComposerDetailPage = () => {
         textareaRef.current.scrollHeight + "px";
     }
   }, [composer?.bio]);
+
+  const bioKey = `${language}Bio`; // ruBio, enBio, и т.д.
+  const bioText = composer[bioKey] || ""; // безопасный доступ
 
   if (!composer) {
     return <Title level={2}>Композитор не найден</Title>;
@@ -116,7 +122,7 @@ const ComposerDetailPage = () => {
         ) : (
           <textarea
             ref={textareaRef}
-            value={composer.bio}
+            value={bioText}
             readOnly
             style={{
               fontFamily: "inherit",

@@ -31,11 +31,13 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
+import { LanguageProvider, useLanguage } from "../context/LanguageContext";
 
 const { Option } = Select;
 const { Content } = Layout;
 
 const MainLayout = () => {
+  const { language, setLanguage } = useLanguage();
   const [selectedKey, setSelectedKey] = useState("/");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -100,7 +102,11 @@ const MainLayout = () => {
 
   const userMenu = (
     <Menu>
-      <Menu.Item key="profile" icon={<UserOutlined />} onClick={()=>nav('/admin')}>
+      <Menu.Item
+        key="profile"
+        icon={<UserOutlined />}
+        onClick={() => nav("/admin")}
+      >
         Профиль
       </Menu.Item>
       <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
@@ -149,15 +155,18 @@ const MainLayout = () => {
             <Space size="middle" align="center">
               <Select
                 defaultValue="ru"
+                value={language}
                 style={{
                   width: 110,
                   borderRadius: 8,
                 }}
                 suffixIcon={<GlobalOutlined />}
+                onSelect={(value) => setLanguage(value)}
               >
                 <Option value="ru">Русский</Option>
                 <Option value="en">English</Option>
                 <Option value="kz">Қазақша</Option>
+                <Option value="tk">Турецкий</Option>
               </Select>
 
               {user ? (
@@ -222,7 +231,10 @@ const MainLayout = () => {
                 label="Пароль"
                 rules={[
                   { required: true, message: "Пожалуйста, введите пароль" },
-                  { min: 6, message: "Пароль должен быть не менее 6 символов" },
+                  {
+                    min: 6,
+                    message: "Пароль должен быть не менее 6 символов",
+                  },
                 ]}
               >
                 <Input.Password />
