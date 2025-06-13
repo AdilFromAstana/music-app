@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button, Typography, Spin, List, Avatar, Row, Col, Space } from "antd";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { getVideoById, getPaginatedVideos } from "../../../firebase"; // Убедись, что getPaginatedVideos есть
+import { getVideoById, getPaginatedVideos } from "../../../firebase/video"; // Убедись, что getPaginatedVideos есть
 import "./Videos.scss";
 import { LeftOutlined } from "@ant-design/icons";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 const getYouTubeId = (url) => {
   const match = url.match(/v=([^&]+)/);

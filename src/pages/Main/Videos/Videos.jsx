@@ -3,7 +3,7 @@ import { Input, Row, Col, Empty } from "antd";
 const { Search } = Input;
 import "./Videos.scss";
 import { Link } from "react-router-dom";
-import { getVideos } from "../../../firebase";
+import { getVideos } from "../../../firebase/video";
 
 const getYouTubeId = (url) => {
   const match = url.match(/[?&]v=([^&]+)/);

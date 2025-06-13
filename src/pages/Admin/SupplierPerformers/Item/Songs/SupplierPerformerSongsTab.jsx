@@ -25,7 +25,7 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 
-const ComposerSongsTab = ({ composerId }) => {
+const SupplierPerformerSongsTab = ({ supplierPerformerId }) => {
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [isCreating, setIsCreating] = useState(false);
@@ -49,8 +49,8 @@ const ComposerSongsTab = ({ composerId }) => {
   };
 
   const { data: audios = [], isLoading } = useQuery({
-    queryKey: ["audios", composerId],
-    queryFn: () => getAudiosByComposer(composerId),
+    queryKey: ["audios", supplierPerformerId],
+    queryFn: () => getAudiosByComposer(supplierPerformerId),
   });
 
   const showModal = (audio = null) => {
@@ -74,13 +74,13 @@ const ComposerSongsTab = ({ composerId }) => {
       }
 
       const newAudio = {
-        composerId,
+        composerId: supplierPerformerId,
         text: values.title,
         file,
       };
 
       await createAudio(newAudio);
-      queryClient.invalidateQueries(["audios", composerId]);
+      queryClient.invalidateQueries(["audios", supplierPerformerId]);
 
       form.resetFields();
       success({ message: "Аудио добавлено" });
@@ -99,7 +99,7 @@ const ComposerSongsTab = ({ composerId }) => {
         try {
           await deleteAudio(audioId);
           message.success("Удалено");
-          queryClient.invalidateQueries(["audios", composerId]);
+          queryClient.invalidateQueries(["audios", supplierPerformerId]);
         } catch {
           message.error("Ошибка удаления");
         }
@@ -111,7 +111,7 @@ const ComposerSongsTab = ({ composerId }) => {
     try {
       setIsStatusChanging(true);
       await toggleAudioStatus(audioId);
-      queryClient.invalidateQueries(["audios", composerId]);
+      queryClient.invalidateQueries(["audios", supplierPerformerId]);
       success({ message: "Статус успешно обновлен!" });
     } catch {
       message.error("Ошибка статуса");
@@ -235,4 +235,4 @@ const ComposerSongsTab = ({ composerId }) => {
   );
 };
 
-export default ComposerSongsTab;
+export default SupplierPerformerSongsTab;

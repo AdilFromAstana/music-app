@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Skeleton, Typography, Input, Empty } from "antd";
 import ComposerHeader from "../../../components/ComposerHeader";
-import { getAudiosByComposer, getComposerById } from "../../../firebase";
+import { getAudiosByComposer } from "../../../firebase/audio";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getSupplierPerformerById } from "../../../firebase/supplierPerformers";
 
 const { Title } = Typography;
 const { Search } = Input;
 
-// Функция для подсветки совпадений
 const highlightMatches = (text, searchTerm) => {
   if (!searchTerm || !text) return text;
 
@@ -33,7 +33,6 @@ const RecordingDetailPage = () => {
   const audioRefs = useRef([]);
   const [audioTimes, setAudioTimes] = useState({});
   const [searchValue, setSearchValue] = useState(""); // Состояние для поиска
-  const [filteredAudios, setFilteredAudios] = useState([]); // Отфильтрованные аудио
 
   const { data: composer = {}, isLoading } = useQuery({
     queryKey: ["composer", id],
@@ -41,7 +40,7 @@ const RecordingDetailPage = () => {
       const [, params] = queryKey;
       const cachedData = queryClient.getQueryData(["composer", params]);
       if (cachedData) return cachedData;
-      return getComposerById(params);
+      return getSupplierPerformerById(params);
     },
     keepPreviousData: true,
     staleTime: 5 * 60 * 1000,
@@ -60,18 +59,6 @@ const RecordingDetailPage = () => {
     staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000,
   });
-
-  // Фильтрация аудио при изменении поискового запроса или данных
-  useEffect(() => {
-    if (searchValue) {
-      const filtered = audios.filter((audio) =>
-        audio.title.toLowerCase().includes(searchValue.toLowerCase())
-      );
-      setFilteredAudios(filtered);
-    } else {
-      setFilteredAudios(audios);
-    }
-  }, [searchValue, audios]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -116,6 +103,14 @@ const RecordingDetailPage = () => {
   const handleSearch = (value) => {
     setSearchValue(value.trim());
   };
+
+  const filteredAudios = useMemo(() => {
+    if (!searchValue) return audios;
+
+    return audios.filter((audio) =>
+      audio.title.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [searchValue, audios]);
 
   if (!composer) {
     return <Title level={2}>Музыка не найдена</Title>;

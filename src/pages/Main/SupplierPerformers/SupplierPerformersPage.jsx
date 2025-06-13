@@ -1,6 +1,6 @@
 import { Typography, List, Input, Spin } from "antd";
 import { Link } from "react-router-dom";
-import { getSupplierPerformerByName } from "../../../firebase";
+import { getSupplierPerformerByName } from "../../../firebase/supplierPerformers";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 

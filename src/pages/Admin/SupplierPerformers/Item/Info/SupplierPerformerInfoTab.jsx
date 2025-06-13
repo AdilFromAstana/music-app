@@ -2,7 +2,12 @@ import { useState } from "react";
 import { Button, Col, Form, Input, message } from "antd";
 import { updateComposer } from "../../../../../firebase/composers";
 
-const ComposerInfoTab = ({ composerId, composer, form, setComposer }) => {
+const SupplierPerformerInfoTab = ({
+  supplierPerformerId,
+  composer,
+  form,
+  setSupplierPerformer,
+}) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -15,8 +20,8 @@ const ComposerInfoTab = ({ composerId, composer, form, setComposer }) => {
     try {
       setLoading(true);
       const values = form.getFieldsValue();
-      const updated = await updateComposer(composerId, values);
-      setComposer(updated);
+      const updated = await updateComposer(supplierPerformerId, values);
+      setSupplierPerformer(updated);
       form.setFieldsValue(updated);
       setIsEditMode(false);
       message.success("Данные обновлены!");
@@ -64,4 +69,4 @@ const ComposerInfoTab = ({ composerId, composer, form, setComposer }) => {
   );
 };
 
-export default ComposerInfoTab;
+export default SupplierPerformerInfoTab;

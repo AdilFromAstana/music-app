@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Typography, Button, Alert, Spin } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getNotePdfById } from "../../../firebase";
+import { getNotePdfById } from "../../../firebase/notePdf";
 import { useMediaQuery } from "react-responsive";
 
 const { Title } = Typography;

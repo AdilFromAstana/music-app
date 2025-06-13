@@ -1,25 +1,24 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Form, Tabs } from "antd";
-import ComposerInfoTab from "./Info/ComposerInfoTab";
-import ComposerSongsTab from "./Songs/ComposerSongsTab";
-import ComposerNotesTab from "./Notes/ComposerNotesTab";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { getComposerById } from "../../../../firebase/composers";
+import { getSupplierPerformerById } from "../../../../firebase/supplierPerformers";
+import SupplierPerformerInfoTab from "./Info/SupplierPerformerInfoTab";
+import SupplierPerformerSongsTab from "./Songs/SupplierPerformerSongsTab";
 
-const ComposerDetailsPage = () => {
+const SupplierPerformerDetailsPage = () => {
   const { id } = useParams();
   const [form] = Form.useForm();
   const nav = useNavigate();
-  const [composer, setComposer] = useState(null);
+  const [supplierPerformer, setSupplierPerformer] = useState(null);
 
   useEffect(() => {
-    const fetchComposer = async () => {
-      const data = await getComposerById(id);
-      setComposer(data);
+    const fetchSupplierPerformer = async () => {
+      const data = await getSupplierPerformerById(id);
+      setSupplierPerformer(data);
       form.setFieldsValue(data);
     };
-    fetchComposer();
+    fetchSupplierPerformer();
   }, [id]);
 
   const tabItems = [
@@ -27,10 +26,10 @@ const ComposerDetailsPage = () => {
       key: "info",
       label: "Информация",
       children: (
-        <ComposerInfoTab
-          composerId={id}
-          composer={composer}
-          setComposer={setComposer}
+        <SupplierPerformerInfoTab
+          supplierPerformerId={id}
+          supplierPerformer={supplierPerformer}
+          setSupplierPerformer={setSupplierPerformer}
           form={form}
         />
       ),
@@ -38,12 +37,7 @@ const ComposerDetailsPage = () => {
     {
       key: "songs",
       label: "Песни",
-      children: <ComposerSongsTab composerId={id} />,
-    },
-    {
-      key: "notes",
-      label: "Ноты",
-      children: <ComposerNotesTab composerId={id} />,
+      children: <SupplierPerformerSongsTab supplierPerformerId={id} />,
     },
   ];
 
@@ -59,8 +53,11 @@ const ComposerDetailsPage = () => {
       }}
     >
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => nav("/admin/composers")} />
-        <div style={{ fontSize: "20px" }}>{composer?.name}</div>
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => nav("/admin/supplierPerformers")}
+        />
+        <div style={{ fontSize: "20px" }}>{supplierPerformer?.name}</div>
       </div>
       <Tabs
         defaultActiveKey="info"
@@ -71,4 +68,4 @@ const ComposerDetailsPage = () => {
   );
 };
 
-export default ComposerDetailsPage;
+export default SupplierPerformerDetailsPage;

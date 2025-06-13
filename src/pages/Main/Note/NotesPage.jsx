@@ -1,7 +1,6 @@
-import React from "react";
 import { List, Typography } from "antd";
 import { Link, useParams } from "react-router-dom";
-import { getCompositions } from "../../../firebase";
+import { getNotePdfs } from "../../../firebase/notePdf";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const { Title } = Typography;
@@ -20,7 +19,7 @@ const NotesPage = () => {
       const [, params] = queryKey;
       const cached = queryClient.getQueryData(["compositions", params]);
       if (cached) return cached;
-      return getCompositions(params);
+      return getNotePdfs(params);
     },
     keepPreviousData: true,
     staleTime: 5 * 60 * 1000,

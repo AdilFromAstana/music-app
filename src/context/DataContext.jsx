@@ -1,6 +1,7 @@
 import { createContext, useContext } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getComposers, getSupplierPerformers } from "../firebase";
+import { getComposers } from "../firebase/composers";
+import { getSupplierPerformers } from "../firebase/supplierPerformers";
 
 const DataContext = createContext();
 

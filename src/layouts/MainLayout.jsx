@@ -24,7 +24,7 @@ import {
 import { DataProvider } from "../context/DataContext";
 import Sider from "antd/es/layout/Sider";
 import "./MainLayout.scss";
-import { auth } from "../firebase";
+import { auth } from "../firebase/firebase";
 import {
   onAuthStateChanged,
   signOut,

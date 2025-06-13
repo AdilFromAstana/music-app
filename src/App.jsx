@@ -25,6 +25,8 @@ import Composers from "./pages/Admin/Composers/Composers";
 import Introduction from "./pages/Main/Introduction/Introduction";
 import ComposersNotePage from "./pages/Main/Note/ComposersNotePage";
 import VideosDetail from "./pages/Main/Videos/VideosDetail";
+import SupplierPerformerItem from "./pages/Admin/SupplierPerformers/Item/SupplierPerformerDetails";
+import SupplierPerformers from "./pages/Admin/SupplierPerformers/SupplierPerformers";
 import SupplierPerformersPage from "./pages/Main/SupplierPerformers/SupplierPerformersPage";
 import FormationOfTraditionalSongArt from "./pages/Main/FormationOfTraditionalSongArt/FormationOfTraditionalSongArt";
 import SupplierPerformerDetailPage from "./pages/Main/SupplierPerformers/SupplierPerformerDetailPage";
@@ -42,6 +44,8 @@ const pageVariants = {
 const adminRoutes = [
   { path: "composers", element: <Composers /> },
   { path: "composers/:id", element: <ComposerItem /> },
+  { path: "supplierPerformers", element: <SupplierPerformers /> },
+  { path: "supplierPerformers/:id", element: <SupplierPerformerItem /> },
 ];
 
 const commonRoutes = [

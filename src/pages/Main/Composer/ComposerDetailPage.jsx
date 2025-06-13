@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Typography, Skeleton } from "antd";
 import ComposerHeader from "../../../components/ComposerHeader";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getComposerById } from "../../../firebase";
+import { getComposerById } from "../../../firebase/composers";
 import { useLanguage } from "../../../context/LanguageContext";
 
 const { Title } = Typography;

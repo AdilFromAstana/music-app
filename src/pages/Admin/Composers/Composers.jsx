@@ -3,7 +3,7 @@ import { useState, useCallback, memo, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import CreateComposerModal from "./Item/CreateComposerModal";
-import { getComposers } from "../../../firebase";
+import { getComposers } from "../../../firebase/composers";
 
 const debounce = (func, delay) => {
   let timer;
@@ -109,44 +109,6 @@ const Composers = memo(() => {
       ),
       width: 200,
     },
-    {
-      title: "Статус",
-      dataIndex: "active",
-      key: "active",
-      render: (record) => {
-        return (
-          <Tag color={record ? "green" : "red"}>
-            {record ? "Активный" : "Архивирован"}
-          </Tag>
-        );
-      },
-      sorter: true,
-      filterDropdown: ({ selectedKeys, confirm, clearFilters }) => (
-        <div style={{ padding: 8 }}>
-          <Select
-            style={{ width: 200 }}
-            placeholder="Выберите статус"
-            value={selectedKeys[0] ?? undefined} // Устанавливаем выбранное значение
-            onChange={(value) => {
-              setSearchFilters((prev) => ({
-                ...prev,
-                active: value,
-              }));
-              confirm();
-            }}
-            allowClear
-            onClear={clearFilters}
-          >
-            <Select.Option value={true}>Активный</Select.Option>
-            <Select.Option value={false}>Архивирован</Select.Option>
-          </Select>
-        </div>
-      ),
-      onFilter: (value, record) => {
-        return record.active === value;
-      },
-      width: 200,
-    },
   ];
 
   return (
@@ -158,6 +120,7 @@ const Composers = memo(() => {
         </Button>
       </div>
       <Table
+        rowKey="id" // ← добавьте это
         columns={columns}
         dataSource={composers || []}
         loading={isLoading}

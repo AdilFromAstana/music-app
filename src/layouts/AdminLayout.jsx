@@ -6,7 +6,7 @@ import { adminItems } from "../data/items";
 import "./MainLayout.scss";
 import { onAuthStateChanged } from "firebase/auth";
 import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
-import { auth } from "../firebase";
+import { auth } from "../firebase/firebase";
 
 const { Content } = Layout;
 
@@ -97,15 +97,17 @@ const AdminLayout = () => {
 
           <Space size="middle" align="center">
             {user && (
-              <Dropdown menu={{ userMenu }} placement="bottomRight">
-                <Space style={{ cursor: "pointer" }}>
+              <Dropdown overlay={userMenu} placement="bottomRight">
+                <span style={{ cursor: "pointer" }}>
                   <Avatar
                     src={user.photoURL}
                     icon={<UserOutlined />}
                     style={{ backgroundColor: "#1890ff" }}
                   />
-                  <span>{user.displayName || user.email}</span>
-                </Space>
+                  <span style={{ marginLeft: 8 }}>
+                    {user.displayName || user.email}
+                  </span>
+                </span>
               </Dropdown>
             )}
           </Space>

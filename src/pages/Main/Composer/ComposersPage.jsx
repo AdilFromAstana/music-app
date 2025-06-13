@@ -2,7 +2,7 @@ import { Typography, List, Input, Spin } from "antd";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { getComposersByName } from "../../../firebase";
+import { getComposersByName } from "../../../firebase/composers";
 
 const { Title } = Typography;
 const { Search } = Input;

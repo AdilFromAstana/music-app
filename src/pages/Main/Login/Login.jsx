@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, message } from "antd";
-import { auth } from "../../../firebase";
+import { auth } from "../../../firebase/firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -10,10 +10,9 @@ import {
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(true); // Переключатель между входом и регистрацией
+  const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
 
-  // Проверка, авторизован ли пользователь
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {

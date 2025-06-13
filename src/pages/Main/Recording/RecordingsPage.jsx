@@ -5,7 +5,7 @@ import { useData } from "../../../context/DataContext";
 const { Title } = Typography;
 
 const RecordingsPage = () => {
-  const { composers, isLoading } = useData();
+  const { supplierPerformers, isLoading } = useData();
 
   return (
     <div
@@ -20,7 +20,7 @@ const RecordingsPage = () => {
       <List
         loading={isLoading}
         bordered
-        dataSource={composers}
+        dataSource={supplierPerformers}
         renderItem={(composer) => (
           <List.Item>
             <Link to={`/recordings/${composer.id}`}>{composer.name}</Link>
