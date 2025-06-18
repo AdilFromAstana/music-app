@@ -6,17 +6,13 @@ import {
   Input,
   Upload,
   message,
-  Switch,
   Space,
-  Tag,
 } from "antd";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getAudiosByComposer,
   deleteAudio,
-  toggleAudioStatus,
   createAudio,
-  updateAudio,
 } from "../../../../../firebase/audio";
 import {
   UploadOutlined,
@@ -32,22 +28,10 @@ const SupplierPerformerSongsTab = ({ supplierPerformerId }) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingAudio, setEditingAudio] = useState(null);
-  const [isStatusChanging, setIsStatusChanging] = useState(false);
+  const [isBulkMode, setIsBulkMode] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-
-  const success = ({ message = "Успех" }) => {
-    messageApi.open({
-      type: "success",
-      content: message,
-    });
-  };
-
-  const error = ({ message = "Ошибка" }) => {
-    messageApi.open({
-      type: "error",
-      content: message,
-    });
-  };
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   const { data: audios = [], isLoading } = useQuery({
     queryKey: ["audios", supplierPerformerId],
@@ -56,6 +40,7 @@ const SupplierPerformerSongsTab = ({ supplierPerformerId }) => {
 
   const showModal = (audio = null) => {
     setEditingAudio(audio);
+    setIsBulkMode(false);
     form.setFieldsValue({
       title: audio?.title || "",
       audioFile: undefined,
@@ -63,44 +48,52 @@ const SupplierPerformerSongsTab = ({ supplierPerformerId }) => {
     setIsModalVisible(true);
   };
 
-  const handleSave = async () => {
-    try {
-      setIsCreating(true);
-      const values = await form.validateFields();
+  const handleBulkUpload = async () => {
+    if (!selectedFiles.length) return;
 
-      const file = values.audioFile?.file;
-
-      if (!file && !editingAudio) {
-        error({ message: "Файл обязателен" });
-        return;
-      }
-
-      if (editingAudio) {
-        // 🔄 Обновление
-        await updateAudio(editingAudio.id, {
-          text: values.title,
-        });
-        success({ message: "Аудио обновлено" });
-      } else {
-        // ➕ Создание
-        const newAudio = {
+    setUploading(true);
+    const results = await Promise.allSettled(
+      selectedFiles.map((file) => {
+        const baseName = file.name.replace(/\\.[^/.]+$/, "");
+        return createAudio({
           composerId: supplierPerformerId,
-          text: values.title,
+          text: baseName,
           file,
-        };
-        await createAudio(newAudio);
-        success({ message: "Аудио добавлено" });
-      }
+        })
+          .then(() => ({
+            name: file.name,
+            status: "✅ Успешно",
+          }))
+          .catch(() => ({
+            name: file.name,
+            status: "❌ Ошибка",
+          }));
+      })
+    );
 
-      queryClient.invalidateQueries(["audios", supplierPerformerId]);
-      form.resetFields();
-      setIsModalVisible(false);
-    } catch (err) {
-      console.error(err)
-      error({ message: "Ошибка при сохранении" });
-    } finally {
-      setIsCreating(false);
-    }
+    await queryClient.invalidateQueries(["audios", supplierPerformerId]);
+    setUploading(false);
+    setIsModalVisible(false);
+    setSelectedFiles([]);
+
+    messageApi.open({
+      type: "info",
+      content: (
+        <div>
+          <b>Результаты загрузки:</b>
+          <ul style={{ marginTop: 8 }}>
+            {results.map((r, idx) => (
+              <li key={idx}>
+                {r.status === "fulfilled"
+                  ? r.value.status + " — " + r.value.name
+                  : r.reason?.message || "❌ Ошибка"}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ),
+      duration: 8,
+    });
   };
 
   const handleDelete = (audioId) => {
@@ -118,24 +111,13 @@ const SupplierPerformerSongsTab = ({ supplierPerformerId }) => {
     });
   };
 
-  const handleToggleStatus = async (audioId) => {
-    try {
-      setIsStatusChanging(true);
-      await toggleAudioStatus(audioId);
-      queryClient.invalidateQueries(["audios", supplierPerformerId]);
-      success({ message: "Статус успешно обновлен!" });
-    } catch {
-      message.error("Ошибка статуса");
-    } finally {
-      setIsStatusChanging(false);
-    }
-  };
-
   const columns = [
     {
       title: "Название",
       dataIndex: "title",
       width: 400,
+      sorter: (a, b) => a.title.localeCompare(b.title),
+      defaultSortOrder: "ascend",
     },
     {
       title: "Ссылка",
@@ -169,13 +151,21 @@ const SupplierPerformerSongsTab = ({ supplierPerformerId }) => {
   return (
     <div>
       {contextHolder}
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16, display: "flex", gap: 8 }}>
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => showModal()}
         >
           Добавить аудио
+        </Button>
+        <Button
+          onClick={() => {
+            setIsBulkMode(true);
+            setIsModalVisible(true);
+          }}
+        >
+          Массовая загрузка
         </Button>
       </div>
 
@@ -188,40 +178,80 @@ const SupplierPerformerSongsTab = ({ supplierPerformerId }) => {
       />
 
       <Modal
-        title={editingAudio ? "Редактировать аудио" : "Добавить аудио"}
+        title={isBulkMode ? "Массовая загрузка" : "Добавить аудио"}
         open={isModalVisible}
         cancelText="Отмена"
-        onCancel={() => setIsModalVisible(false)}
-        onOk={handleSave}
-        okButtonProps={{
-          loading: isCreating,
+        onCancel={() => {
+          setIsModalVisible(false);
+          setSelectedFiles([]);
         }}
-        okText="Сохранить"
+        footer={
+          isBulkMode
+            ? [
+                <Button
+                  key="upload"
+                  type="primary"
+                  loading={uploading}
+                  onClick={handleBulkUpload}
+                  disabled={!selectedFiles.length}
+                >
+                  Начать загрузку
+                </Button>,
+              ]
+            : undefined
+        }
       >
         <Form form={form} layout="vertical">
-          <Form.Item
-            name="title"
-            label="Название"
-            rules={[{ required: true, message: "Введите название" }]}
-          >
-            <Input />
-          </Form.Item>
-          {!editingAudio && (
-            <Form.Item
-              name="audioFile"
-              label="Аудио файл"
-              getValueFromEvent={(e) => e}
-              valuePropName="file"
-              rules={
-                editingAudio
-                  ? []
-                  : [{ required: true, message: "Выберите файл" }]
-              }
-            >
-              <Upload beforeUpload={() => false} maxCount={1} accept="audio/*">
-                <Button icon={<UploadOutlined />}>Загрузить</Button>
+          {isBulkMode ? (
+            <Form.Item label="Массовая загрузка">
+              <Upload
+                multiple
+                accept="audio/*"
+                fileList={selectedFiles.map((file, index) => ({
+                  uid: index.toString(),
+                  name: file.name,
+                }))}
+                beforeUpload={() => false}
+                showUploadList
+                onChange={(info) => {
+                  const files = info.fileList
+                    .map((f) => f.originFileObj)
+                    .filter(Boolean);
+                  setSelectedFiles(files);
+                }}
+              >
+                <Button icon={<UploadOutlined />}>
+                  Выбрать несколько аудиофайлов
+                </Button>
               </Upload>
             </Form.Item>
+          ) : (
+            <>
+              <Form.Item
+                name="title"
+                label="Название"
+                rules={[{ required: true, message: "Введите название" }]}
+              >
+                <Input />
+              </Form.Item>
+              {!editingAudio && (
+                <Form.Item
+                  name="audioFile"
+                  label="Аудио файл"
+                  getValueFromEvent={(e) => e}
+                  valuePropName="file"
+                  rules={[{ required: true, message: "Выберите файл" }]}
+                >
+                  <Upload
+                    beforeUpload={() => false}
+                    maxCount={1}
+                    accept="audio/*"
+                  >
+                    <Button icon={<UploadOutlined />}>Загрузить</Button>
+                  </Upload>
+                </Form.Item>
+              )}
+            </>
           )}
         </Form>
       </Modal>

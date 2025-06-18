@@ -7,8 +7,14 @@ import {
   query,
   getDoc,
   where,
+  deleteDoc,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { db, storage } from "./firebase";
 
 export async function createAudio({ composerId, text, file }) {
@@ -17,15 +23,18 @@ export async function createAudio({ composerId, text, file }) {
       throw new Error("Не указан composerId или файл");
     }
 
-    const storageRef = ref(storage, `audios/${composerId}`);
-    await uploadBytes(storageRef, file);
+    const cleanFileName = encodeURIComponent(file.name); // безопасное имя
+    const storagePath = `audios/${composerId}/${cleanFileName}`;
+    const storageRef = ref(storage, storagePath);
 
+    await uploadBytes(storageRef, file);
     const url = await getDownloadURL(storageRef);
 
     const docRef = await addDoc(collection(db, "audios"), {
       composerId,
       title: text,
       audioLink: url,
+      storagePath, // <--- сохраняем путь
       active: false,
       createdAt: new Date(),
     });
@@ -55,14 +64,33 @@ export async function updateAudio(audioId, data) {
   });
 }
 
-export async function deleteAudio(values) {
+export async function deleteAudio(audioId) {
   try {
-    console.log("Город успешно добавлен с ID:", values);
+    if (!audioId) throw new Error("audioId is required");
+
+    const audioRef = doc(db, "audios", audioId);
+    const snapshot = await getDoc(audioRef);
+
+    if (!snapshot.exists()) {
+      throw new Error("Аудио не найдено");
+    }
+
+    const audioData = snapshot.data();
+
+    if (audioData.storagePath) {
+      const fileRef = ref(storage, audioData.storagePath);
+      await deleteObject(fileRef);
+    }
+
+    await deleteDoc(audioRef);
+    console.log("Аудио удалено:", audioId);
+    return true;
   } catch (error) {
-    console.error("Ошибка при создании города:", error);
+    console.error("Ошибка при удалении аудио:", error);
     throw error;
   }
 }
+
 
 export async function toggleAudioStatus(audioId) {
   try {

@@ -60,7 +60,7 @@ const SupplierPerformerDetailsPage = () => {
         <div style={{ fontSize: "20px" }}>{supplierPerformer?.name}</div>
       </div>
       <Tabs
-        defaultActiveKey="info"
+        defaultActiveKey="songs"
         items={tabItems}
         style={{ width: "100%" }}
       />
