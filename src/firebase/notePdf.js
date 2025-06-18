@@ -1,55 +1,48 @@
-import { collection, addDoc, doc, getDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db } from "./firebase";
+import { setDoc, getDoc, doc, deleteDoc } from "firebase/firestore";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
+import { db, storage } from "./firebase";
 
-export async function createNotePdf({ composerId, text, file }) {
-  try {
-    if (!composerId || !file) {
-      throw new Error("Не указан composerId или файл");
-    }
+const NOTE_PDF_ID = "C6Ukv0P8NWNzt7TJSd51"; // фиксированный ID
 
-    const storageRef = ref(storage, `notePdfs/${composerId}`);
-    await uploadBytes(storageRef, file);
+export async function createNotePdf({ file }) {
+  if (!file) throw new Error("Файл обязателен");
 
-    const url = await getDownloadURL(storageRef);
+  const storagePath = `notePdfs/${NOTE_PDF_ID}.pdf`;
+  const storageRef = ref(storage, storagePath);
 
-    const docRef = await addDoc(collection(db, "notePdfs"), {
-      composerId,
-      title: text,
-      notePdfLink: url,
-      active: false,
-      createdAt: new Date(),
-    });
+  await uploadBytes(storageRef, file);
+  const url = await getDownloadURL(storageRef);
 
-    console.log("ПДФ успешно добавлен с ID:", docRef.id);
-    return docRef.id;
-  } catch (error) {
-    console.error("Ошибка при добавлении ПДФ:", error);
-    throw error;
-  }
+  const docRef = doc(db, "notePdfs", NOTE_PDF_ID);
+  await setDoc(docRef, {
+    notePdfLink: url,
+    updatedAt: new Date(),
+  });
+
+  return NOTE_PDF_ID;
 }
 
-export async function getNotePdfById(id) {
-  console.log("id: ", id);
-  if (!id) throw new Error("ID is required");
+export async function getNotePdfById() {
+  const docRef = doc(db, "notePdfs", NOTE_PDF_ID);
+  const snapshot = await getDoc(docRef);
+  if (!snapshot.exists()) return null;
 
-  const notePdfDoc = doc(db, "notePdfs", id);
-  const snapshot = await getDoc(notePdfDoc);
-
-  if (!snapshot.exists()) {
-    throw new Error(`notePdfs with ID ${id} not found`);
-  }
-
-  return { id: snapshot.id, ...snapshot.data() };
+  return {
+    id: snapshot.id,
+    ...snapshot.data(),
+  };
 }
 
-export async function getNotePdfs() {
-  const compositionsCol = collection(db, "notePdfs");
-  const snapshot = await getDocs(compositionsCol);
-  const compositions = snapshot.docs.map((doc) => ({
-    id: doc.id, // ✅ Добавляем docId
-    ...doc.data(), // ✅ Добавляем все данные документа
-  }));
-  console.log("compositions: ", compositions);
-  return compositions;
+export async function deleteNotePdf() {
+  const filePath = `notePdfs/${NOTE_PDF_ID}.pdf`;
+  const fileRef = ref(storage, filePath);
+  await deleteObject(fileRef);
+
+  const docRef = doc(db, "notePdfs", NOTE_PDF_ID);
+  await deleteDoc(docRef);
 }

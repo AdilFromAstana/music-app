@@ -20,9 +20,11 @@ const AdminLayout = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const path = location.pathname.replace(/^\/admin/, "") || "/notes";
-    setSelectedKey(path);
-    localStorage.setItem("selectedMenuKey", path);
+    const path = location.pathname.replace(/^\/admin/, "");
+    const segments = path.split("/").filter(Boolean);
+    const baseKey = "/" + (segments[0] || "notes"); // если пусто — /notes
+    setSelectedKey(baseKey);
+    localStorage.setItem("selectedMenuKey", baseKey);
   }, [location]);
 
   useEffect(() => {
@@ -51,12 +53,8 @@ const AdminLayout = () => {
 
   const userMenu = (
     <Menu>
-      <Menu.Item
-        key="profile"
-        icon={<UserOutlined />}
-        onClick={() => nav("/admin")}
-      >
-        Профиль
+      <Menu.Item key="profile" icon={<UserOutlined />} onClick={() => nav("/")}>
+        Главное
       </Menu.Item>
       <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
         Выйти
@@ -93,7 +91,7 @@ const AdminLayout = () => {
             boxShadow: "0 2px 4px rgba(0,0,0,0.03)",
           }}
         >
-          <div style={{ fontWeight: "bold", fontSize: 18 }}>VK Layout</div>
+          <div style={{ fontWeight: "bold", fontSize: 18 }}>Дәстүрлі ән</div>
 
           <Space size="middle" align="center">
             {user && (

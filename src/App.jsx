@@ -5,7 +5,7 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, App as AntdApp } from "antd";
 import StagesOfMentoringStudentDetailPage from "./pages/Main/StagesOfMentoring/StagesOfMentoringStudentDetailPage";
 import StagesOfMentoringStudentPage from "./pages/Main/StagesOfMentoring/StagesOfMentoringStudentPage";
 import Videos from "./pages/Main/Videos/Videos";
@@ -16,7 +16,7 @@ import NoteDetailPage from "./pages/Main/Note/NoteDetailPage";
 import { AnimatePresence, motion } from "framer-motion";
 import ComposersPage from "./pages/Main/Composer/ComposersPage";
 import AdminLayout from "./layouts/AdminLayout";
-import NotesPage from "./pages/Main/Note/NotesPage";
+// import NotesPage from "./pages/Main/Note/NotesPage";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/Main/HomePage";
 import ComposerItem from "./pages/Admin/Composers/Item/ComposerDetails";
@@ -34,6 +34,7 @@ import Conclusion from "./pages/Main/Conclusion/Conclusion";
 import "./App.css";
 import Login from "./pages/Main/Login/Login";
 import { LanguageProvider } from "./context/LanguageContext";
+import Note from "./pages/Admin/Notes/Note";
 
 const pageVariants = {
   initial: { opacity: 0, y: 20 },
@@ -46,6 +47,10 @@ const adminRoutes = [
   { path: "composers/:id", element: <ComposerItem /> },
   { path: "supplierPerformers", element: <SupplierPerformers /> },
   { path: "supplierPerformers/:id", element: <SupplierPerformerItem /> },
+  {
+    path: "notes",
+    element: <Note />,
+  },
 ];
 
 const commonRoutes = [
@@ -62,14 +67,10 @@ const commonRoutes = [
     path: "/stagesOfMentoringStudent/:id",
     element: <StagesOfMentoringStudentDetailPage />,
   },
-  {
-    path: "/composersNotes",
-    element: <ComposersNotePage />,
-  },
-  {
-    path: "/composersNotes/:composerId/",
-    element: <NotesPage />,
-  },
+  // {
+  //   path: "/composersNotes/:composerId/",
+  //   element: <NotesPage />,
+  // },
   {
     path: "/composersNotes/:composerId/:compositionId",
     element: <NoteDetailPage />,
@@ -167,7 +168,9 @@ function App() {
     <ConfigProvider theme={{ hashed: false }}>
       <QueryClientProvider client={queryClient}>
         <LanguageProvider>
-          <AppRouter />
+          <AntdApp>
+            <AppRouter />
+          </AntdApp>
         </LanguageProvider>
       </QueryClientProvider>
     </ConfigProvider>

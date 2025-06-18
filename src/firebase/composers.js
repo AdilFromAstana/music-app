@@ -1,4 +1,5 @@
-import { db } from "./firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { db, storage } from "./firebase";
 import {
   collection,
   getDocs,
@@ -9,6 +10,7 @@ import {
   limit,
   startAfter,
   getDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 export async function getComposers() {
@@ -66,9 +68,12 @@ export const getComposersByName = async (params = {}) => {
 export async function updateComposer(docId, updateFields) {
   const docRef = doc(db, "composers", docId);
 
+  const sanitized = Object.fromEntries(
+    Object.entries(updateFields).filter(([_, v]) => v !== undefined)
+  );
+
   try {
-    await updateDoc(docRef, updateFields);
-    console.log("Document updated successfully!");
+    await updateDoc(docRef, sanitized);
 
     const updatedDocSnap = await getDoc(docRef);
     if (updatedDocSnap.exists()) {
@@ -106,4 +111,32 @@ export async function getComposerById(id) {
   }
 
   return { id: snapshot.id, ...snapshot.data() };
+}
+
+export async function composerAudioBio({ composerId, file, lang }) {
+  if (!composerId || !file || !lang) {
+    throw new Error("composerId, file или lang не указаны");
+  }
+
+  try {
+    const filePath = `audios/${composerId}/${lang}.mp3`;
+    const storageRef = ref(storage, filePath);
+    await uploadBytes(storageRef, file);
+    const downloadUrl = await getDownloadURL(storageRef);
+
+    // 2. Обновляем composer с полем вроде 'ruAudioBio'
+    const composerRef = doc(db, "composers", composerId);
+    const fieldName = `${lang}AudioBio`;
+
+    await updateDoc(composerRef, {
+      [fieldName]: downloadUrl,
+      updatedAt: serverTimestamp(),
+    });
+
+    console.log(`Поле ${fieldName} обновлено`);
+    return downloadUrl;
+  } catch (error) {
+    console.error("Ошибка при сохранении аудио:", error);
+    throw error;
+  }
 }

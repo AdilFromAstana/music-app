@@ -1,26 +1,34 @@
 import { useState } from "react";
-import { Button, Col, Form, Input, message } from "antd";
-import { updateComposer } from "../../../../../firebase/composers";
+import { Button, Form, message } from "antd";
+import { updateSupplierPerformer } from "../../../../../firebase/supplierPerformers";
+import LanguageSwitcher from "./components/LanguageSwitcher";
+import LocalizedInput from "./components/LocalizedInput";
+import LocalizedTextarea from "./components/LocalizedTextarea";
+import YearsInput from "./components/YearsInput";
 
 const SupplierPerformerInfoTab = ({
   supplierPerformerId,
-  composer,
+  supplierPerformer,
   form,
   setSupplierPerformer,
 }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [language, setLanguage] = useState("ru");
 
   const handleCancel = () => {
     setIsEditMode(false);
-    form.setFieldsValue(composer);
+    form.setFieldsValue(supplierPerformer);
   };
 
   const handleSave = async () => {
     try {
       setLoading(true);
-      const values = form.getFieldsValue();
-      const updated = await updateComposer(supplierPerformerId, values);
+      const values = form.getFieldsValue(true);
+      const updated = await updateSupplierPerformer(
+        supplierPerformerId,
+        values
+      );
       setSupplierPerformer(updated);
       form.setFieldsValue(updated);
       setIsEditMode(false);
@@ -33,30 +41,19 @@ const SupplierPerformerInfoTab = ({
     }
   };
 
-  if (!composer) return "Загрузка...";
+  if (!supplierPerformer) return "Загрузка...";
 
   return (
     <Form form={form} layout="vertical" onFinish={handleSave}>
-      <Col span={24}>
-        <Form.Item name="name" label="Имя" rules={[{ required: true }]}>
-          <Input disabled={!isEditMode} />
-        </Form.Item>
-      </Col>
-      <Col span={24}>
-        <Form.Item name="years" label="Годы жизни" rules={[{ required: true }]}>
-          <Input disabled={!isEditMode} />
-        </Form.Item>
-      </Col>
-      <Col span={24}>
-        <Form.Item name="bio" label="Биография" rules={[{ required: true }]}>
-          <Input.TextArea rows={8} disabled={!isEditMode} />
-        </Form.Item>
-      </Col>
+      <LanguageSwitcher language={language} setLanguage={setLanguage} />
+      <LocalizedInput language={language} isEditMode={isEditMode} />
+      <YearsInput isEditMode={isEditMode} />
+      <LocalizedTextarea language={language} isEditMode={isEditMode} />
 
       <div style={{ display: "flex", gap: 10 }}>
         {isEditMode ? (
           <>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button type="primary" loading={loading} onClick={handleSave}>
               Сохранить
             </Button>
             <Button onClick={handleCancel}>Отмена</Button>

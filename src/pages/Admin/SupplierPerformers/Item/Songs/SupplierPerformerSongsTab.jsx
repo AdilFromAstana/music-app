@@ -16,6 +16,7 @@ import {
   deleteAudio,
   toggleAudioStatus,
   createAudio,
+  updateAudio,
 } from "../../../../../firebase/audio";
 import {
   UploadOutlined,
@@ -68,25 +69,35 @@ const SupplierPerformerSongsTab = ({ supplierPerformerId }) => {
       const values = await form.validateFields();
 
       const file = values.audioFile?.file;
+
       if (!file && !editingAudio) {
-        error("Файл обязателен");
+        error({ message: "Файл обязателен" });
         return;
       }
 
-      const newAudio = {
-        composerId: supplierPerformerId,
-        text: values.title,
-        file,
-      };
+      if (editingAudio) {
+        // 🔄 Обновление
+        await updateAudio(editingAudio.id, {
+          text: values.title,
+        });
+        success({ message: "Аудио обновлено" });
+      } else {
+        // ➕ Создание
+        const newAudio = {
+          composerId: supplierPerformerId,
+          text: values.title,
+          file,
+        };
+        await createAudio(newAudio);
+        success({ message: "Аудио добавлено" });
+      }
 
-      await createAudio(newAudio);
       queryClient.invalidateQueries(["audios", supplierPerformerId]);
-
       form.resetFields();
-      success({ message: "Аудио добавлено" });
       setIsModalVisible(false);
     } catch (err) {
-      message.error({ message: "Ошибка при сохранении" + err.data });
+      console.error(err)
+      error({ message: "Ошибка при сохранении" });
     } finally {
       setIsCreating(false);
     }
@@ -133,23 +144,6 @@ const SupplierPerformerSongsTab = ({ supplierPerformerId }) => {
         <audio src={audio} controls style={{ width: "100%" }} />
       ),
       width: 400,
-    },
-    {
-      title: "Статус",
-      dataIndex: "active",
-      render: (value, record) => {
-        return (
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <Tag color={record?.active ? "green" : "red"}>Активный</Tag>
-            <Switch
-              loading={isStatusChanging}
-              checked={value}
-              onChange={() => handleToggleStatus(record.id)}
-            />
-          </div>
-        );
-      },
-      width: 100,
     },
     {
       title: "Действия",

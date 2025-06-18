@@ -47,13 +47,12 @@ export async function uploadAudio(values) {
   }
 }
 
-export async function updateAudio(values) {
-  try {
-    console.log("Город успешно добавлен с ID:", values);
-  } catch (error) {
-    console.error("Ошибка при создании города:", error);
-    throw error;
-  }
+export async function updateAudio(audioId, data) {
+  const docRef = doc(db, "audios", audioId);
+  await updateDoc(docRef, {
+    title: data.text,
+    updatedAt: new Date(),
+  });
 }
 
 export async function deleteAudio(values) {
@@ -92,7 +91,6 @@ export async function toggleAudioStatus(audioId) {
 }
 
 export async function getAudiosByComposer(composerId) {
-  console.log("composerId: ", composerId);
   if (!composerId) throw new Error("composerId is required");
 
   const audiosQuery = query(

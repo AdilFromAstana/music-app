@@ -5,11 +5,13 @@ import { Typography, Skeleton } from "antd";
 import ComposerHeader from "../../../components/ComposerHeader";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSupplierPerformerById } from "../../../firebase/supplierPerformers";
+import { useLanguage } from "../../../context/LanguageContext";
 
 const { Title } = Typography;
 
 const SupplierPerformerDetailPage = () => {
   const { id } = useParams();
+  const { language } = useLanguage();
   const queryClient = useQueryClient();
   const textareaRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -54,9 +56,12 @@ const SupplierPerformerDetailPage = () => {
     }
   }, [composer?.bio]);
 
-  if (!composer) {
-    return <Title level={2}>Композитор не найден</Title>;
-  }
+  const bioKey = `${language}Bio`;
+  const bioAudioKey = `${language}BioAudio`;
+  const bioText = composer[bioKey] || "";
+  const bioAudio = composer[bioAudioKey] || "";
+
+  if (!composer) <Title level={2}>Композитор не найден</Title>;
 
   return (
     <div
@@ -91,11 +96,11 @@ const SupplierPerformerDetailPage = () => {
               position: "absolute",
               right: 0,
               top: 0,
-              display: composer?.bioAudio ? "flex" : "none",
+              display: bioAudio ? "flex" : "none",
               alignItems: "center",
             }}
           >
-            <audio ref={audioRef} src={composer?.bioAudio} />
+            <audio ref={audioRef} src={bioAudio} />
             {isPlaying ? (
               <PauseCircleOutlined
                 style={{ fontSize: 24, cursor: "pointer" }}
@@ -119,7 +124,7 @@ const SupplierPerformerDetailPage = () => {
         ) : (
           <textarea
             ref={textareaRef}
-            value={composer.bio}
+            value={bioText}
             readOnly
             style={{
               fontFamily: "inherit",

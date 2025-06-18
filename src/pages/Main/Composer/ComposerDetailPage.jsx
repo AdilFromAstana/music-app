@@ -12,7 +12,6 @@ const { Title } = Typography;
 const ComposerDetailPage = () => {
   const { id } = useParams();
   const { language } = useLanguage();
-  console.log("language: ", language);
   const queryClient = useQueryClient();
   const textareaRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -54,8 +53,10 @@ const ComposerDetailPage = () => {
     }
   }, [composer?.bio]);
 
-  const bioKey = `${language}Bio`; // ruBio, enBio, и т.д.
-  const bioText = composer[bioKey] || ""; // безопасный доступ
+  const bioKey = `${language}Bio`;
+  const bioAudioKey = `${language}AudioBio`;
+  const bioText = composer[bioKey] || "";
+  const bioAudio = composer[bioAudioKey] || "";
 
   if (!composer) {
     return <Title level={2}>Композитор не найден</Title>;
@@ -94,11 +95,11 @@ const ComposerDetailPage = () => {
               position: "absolute",
               right: 0,
               top: 0,
-              display: composer?.bioAudio ? "flex" : "none",
+              display: bioAudio ? "flex" : "none",
               alignItems: "center",
             }}
           >
-            <audio ref={audioRef} src={composer?.bioAudio} />
+            <audio ref={audioRef} src={bioAudio} />
             {isPlaying ? (
               <PauseCircleOutlined
                 style={{ fontSize: 24, cursor: "pointer" }}

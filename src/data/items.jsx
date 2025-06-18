@@ -45,4 +45,5 @@ export const items = [
 export const adminItems = [
   { key: "/composers", label: "⁠Халық композиторлары" },
   { key: "/supplierPerformers", label: "⁠Жеткізуші орындаушылар" },
+  { key: "/notes", label: "Ноталар" },
 ];

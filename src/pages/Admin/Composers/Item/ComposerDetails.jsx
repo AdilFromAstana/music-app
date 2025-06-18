@@ -1,8 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Form, Tabs } from "antd";
 import ComposerInfoTab from "./Info/ComposerInfoTab";
-import ComposerSongsTab from "./Songs/ComposerSongsTab";
-import ComposerNotesTab from "./Notes/ComposerNotesTab";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { getComposerById } from "../../../../firebase/composers";
@@ -35,16 +33,6 @@ const ComposerDetailsPage = () => {
         />
       ),
     },
-    {
-      key: "songs",
-      label: "Песни",
-      children: <ComposerSongsTab composerId={id} />,
-    },
-    {
-      key: "notes",
-      label: "Ноты",
-      children: <ComposerNotesTab composerId={id} />,
-    },
   ];
 
   return (
@@ -59,7 +47,10 @@ const ComposerDetailsPage = () => {
       }}
     >
       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-        <Button icon={<ArrowLeftOutlined />} onClick={() => nav("/admin/composers")} />
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => nav("/admin/composers")}
+        />
         <div style={{ fontSize: "20px" }}>{composer?.name}</div>
       </div>
       <Tabs

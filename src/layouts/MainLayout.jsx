@@ -107,7 +107,7 @@ const MainLayout = () => {
         icon={<UserOutlined />}
         onClick={() => nav("/admin")}
       >
-        Профиль
+        Админ панель
       </Menu.Item>
       <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout}>
         Выйти
@@ -150,7 +150,7 @@ const MainLayout = () => {
               boxShadow: "0 2px 4px rgba(0,0,0,0.03)",
             }}
           >
-            <div style={{ fontWeight: "bold", fontSize: 18 }}>VK Layout</div>
+            <div style={{ fontWeight: "bold", fontSize: 18 }}>Дәстүрлі ән</div>
 
             <Space size="middle" align="center">
               <Select
