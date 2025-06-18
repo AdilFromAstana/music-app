@@ -1,55 +1,48 @@
-import { List, Typography } from "antd";
-import { Link, useParams } from "react-router-dom";
-import { getNotePdfs } from "../../../firebase/notePdf";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Typography, Divider, Spin, Alert } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import { getNotePdfById } from "../../../firebase/notePdf";
 
 const { Title } = Typography;
 
 const NotesPage = () => {
-  const queryClient = useQueryClient();
-  const { composerId } = useParams();
-
   const {
-    data: compositions = [],
+    data: notePdf,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["compositions", {}],
-    queryFn: async ({ queryKey }) => {
-      const [, params] = queryKey;
-      const cached = queryClient.getQueryData(["compositions", params]);
-      if (cached) return cached;
-      return getNotePdfs(params);
-    },
-    keepPreviousData: true,
+    queryKey: ["notePdf"],
+    queryFn: () => getNotePdfById(),
     staleTime: 5 * 60 * 1000,
-    cacheTime: 10 * 60 * 1000,
   });
 
-  console.log("compositions: ", compositions);
-
   return (
-    <div
-      style={{
-        maxWidth: "800px",
-        textAlign: "center",
-        margin: "0 auto",
-        width: "100%",
-      }}
-    >
-      <Title level={2}>НОТАЛАР</Title>
-      <List
-        loading={isLoading}
-        bordered
-        dataSource={compositions}
-        renderItem={(composition) => (
-          <List.Item>
-            <Link to={`/composersNotes/${composerId}/${composition.id}`}>
-              {composition.title}
-            </Link>
-          </List.Item>
-        )}
-      />
+    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      {isLoading ? (
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Spin size="large" />
+        </div>
+      ) : error ? (
+        <Alert type="error" message="Ошибка загрузки PDF" />
+      ) : notePdf?.notePdfLink ? (
+        <div style={{ flex: 1 }}>
+          <iframe
+            src={notePdf.notePdfLink}
+            width="100%"
+            height="100%"
+            title="PDF Preview"
+            style={{ border: "none" }}
+          />
+        </div>
+      ) : (
+        <Alert type="info" message="Файл PDF пока не загружен" />
+      )}
     </div>
   );
 };

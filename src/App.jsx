@@ -16,7 +16,7 @@ import NoteDetailPage from "./pages/Main/Note/NoteDetailPage";
 import { AnimatePresence, motion } from "framer-motion";
 import ComposersPage from "./pages/Main/Composer/ComposersPage";
 import AdminLayout from "./layouts/AdminLayout";
-// import NotesPage from "./pages/Main/Note/NotesPage";
+import NotesPage from "./pages/Main/Note/NotesPage";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/Main/HomePage";
 import ComposerItem from "./pages/Admin/Composers/Item/ComposerDetails";
@@ -67,10 +67,10 @@ const commonRoutes = [
     path: "/stagesOfMentoringStudent/:id",
     element: <StagesOfMentoringStudentDetailPage />,
   },
-  // {
-  //   path: "/composersNotes/:composerId/",
-  //   element: <NotesPage />,
-  // },
+  {
+    path: "/notes",
+    element: <NotesPage />,
+  },
   {
     path: "/composersNotes/:composerId/:compositionId",
     element: <NoteDetailPage />,

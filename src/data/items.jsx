@@ -37,7 +37,7 @@ export const items = [
   },
   { key: "/recordings", label: "⁠Аудиожазбалар", icon: <AudioOutlined /> },
   { key: "/videos", label: "⁠Бейнежазбалар", icon: <VideoCameraOutlined /> },
-  { key: "/composersNotes", label: "⁠Ноталар", icon: <FilePdfOutlined /> },
+  { key: "/notes", label: "⁠Ноталар", icon: <FilePdfOutlined /> },
   { key: "/conclusion", label: "⁠Қорытынды", icon: <CheckCircleOutlined /> },
   { key: "/literature", label: "⁠Әдебиеттер", icon: <ReadOutlined /> },
 ];

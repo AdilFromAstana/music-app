@@ -166,7 +166,7 @@ const MainLayout = () => {
                 <Option value="ru">Русский</Option>
                 <Option value="en">English</Option>
                 <Option value="kz">Қазақша</Option>
-                <Option value="tk">Турецкий</Option>
+                <Option value="tk">Türkçe</Option>
               </Select>
 
               {user ? (
